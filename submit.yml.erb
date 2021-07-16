@@ -16,11 +16,11 @@ script:
   # queue_name: '<%# csc_slurm_partition %>'
   native:
       - '-c'
-      - '<%= cores  %>'
+      - '<%= csc_cores  %>'
       - '-t'
-      - '<%= time %>'
-      - '--mem=<%= memory %>G'
-      - '--gres=nvme:<%= nvme %>'
+      - '<%= csc_time %>'
+      - '--mem=<%= csc_memory %>G'
+      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>'
   # You can override the command used to query the hostname of the compute node
   # here
   #

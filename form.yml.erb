@@ -1,5 +1,10 @@
 <% require "/appl/opt/ood_util/attributes/csc_slurm_partition" -%>
 <% require "/appl/opt/ood_util/attributes/csc_slurm_project" -%>
+<% require "/appl/opt/ood_util/attributes/csc_slurm_limits" -%>
+<% require "/appl/opt/ood_util/attributes/csc_cores" -%>
+<% require "/appl/opt/ood_util/attributes/csc_time" -%>
+<% require "/appl/opt/ood_util/attributes/csc_memory" -%>
+<% require "/appl/opt/ood_util/attributes/csc_nvme" -%>
 # Batch Connect app configuration file
 #
 # @note Used to define the submitted cluster, title, description, and
@@ -35,32 +40,25 @@ attributes:
   extra_jupyter_args:
       value: ""
 
-  cores:
+  csc_cores:
       value: 1
       max: 4
-      label: "Number of CPUs"
-      min: 1
-      widget: number_field
       cacheable: false
-  nvme:
+  csc_nvme:
       value: 32
       widget: number_field
-      label: "Local disk (GB)"
-      min: 0
       max: 640
-
-
   csc_slurm_partition:
       value: "interactive"
       fixed: true 
-  memory:
+  csc_memory:
       widget: number_field
       label: "Memory (GB)"
       max: 64
       min: 2
       value: 2
       cacheable: false
-  time:
+  csc_time:
       value: "4:00:00"
       cacheable: false
   modules:
@@ -78,13 +76,17 @@ attributes:
         - ["Lab","lab"]    
       value: "notebook"
       cacheable: false
+  csc_slurm_limits:
+    data:
+      partition: "interactive"
 form:
-  - cores
-  - memory
-  - nvme
+  - csc_cores
+  - csc_memory
+  - csc_nvme
   - csc_slurm_project
   - csc_slurm_partition
-  - time
+  - csc_time
   - modules
   - jp_type
   - extra_jupyter_args
+  - csc_slurm_limits
