@@ -1,3 +1,12 @@
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_project" -%>
+<% require "/appl/opt/ood/attributes/csc_slurm_partition" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_project" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_limits" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_cores" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_time" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_memory" -%>
+<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_nvme" -%>
+
 # Batch Connect app configuration file
 #
 # @note Used to define the submitted cluster, title, description, and
