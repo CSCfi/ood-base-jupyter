@@ -1,11 +1,11 @@
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_project" -%>
-<% require "/appl/opt/ood/attributes/csc_slurm_partition" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_project" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_slurm_limits" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_cores" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_time" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_memory" -%>
-<% require "/appl/opt/ood/#{ENV["SLURM_OOD_ENV"]}/util/attributes/csc_nvme" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_slurm_project" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_slurm_partition" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_slurm_project" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_slurm_limits" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_cores" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_time" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_memory" -%>
+<% require "/appl/opt/ood/#{ENV['SLURM_OOD_ENV'].strip}/util/attributes/csc_nvme" -%>
 
 # Batch Connect app configuration file
 #
@@ -42,27 +42,9 @@ attributes:
   extra_jupyter_args:
       value: ""
 
-  csc_cores:
-      value: 1
-      max: 4
-      cacheable: false
-  csc_nvme:
-      value: 32
-      widget: number_field
-      max: 640
   csc_slurm_partition:
       value: "interactive"
       fixed: true 
-  csc_memory:
-      widget: number_field
-      label: "Memory (GB)"
-      max: 64
-      min: 2
-      value: 2
-      cacheable: false
-  csc_time:
-      value: "4:00:00"
-      cacheable: false
   modules:
       label: Python
       widget: select
