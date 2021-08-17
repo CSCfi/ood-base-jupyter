@@ -36,7 +36,9 @@ attributes:
       value: ""
 
   csc_slurm_partition:
-      value: "interactive"
+    value: "interactive"
+    ignore:
+      - "large"
   modules:
       label: Python
       widget: select
