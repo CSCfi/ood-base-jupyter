@@ -57,6 +57,16 @@ attributes:
   csc_slurm_limits:
     data:
       partition: "interactive"
+  notebook_dir:
+    label: "Working directory"
+    widget: select
+    value: "/projappl"
+    options:
+      - "<%= ENV["HOME"] -%>"
+      - "/projappl"
+      - "/scratch"
+      - "/"
+
 form:
   - csc_cores
   - csc_memory
@@ -66,5 +76,6 @@ form:
   - csc_time
   - modules
   - jp_type
+  - notebook_dir
   - extra_jupyter_args
   - csc_slurm_limits
