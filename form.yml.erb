@@ -37,8 +37,11 @@ attributes:
 
   csc_slurm_partition:
     value: "interactive"
-    ignore:
-      - "large"
+    select:
+      - "interactive"
+      - "small"
+      - "gpu"
+      - "test"
   modules:
       label: Python
       widget: select
