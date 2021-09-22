@@ -20,7 +20,7 @@ script:
       - '-t'
       - '<%= csc_time %>'
       - '--mem=<%= csc_memory %>G'
-      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>'
+      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>,gpu:v100:<%= csc_gpu.blank? ? 0 : csc_gpu %>'
   # You can override the command used to query the hostname of the compute node
   # here
   #
