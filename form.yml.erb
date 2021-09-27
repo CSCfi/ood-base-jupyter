@@ -42,6 +42,8 @@ attributes:
       - "small"
       - "gpu"
       - "test"
+    help: |
+      Selecting gpu partition will reserve 1 GPU (V100)
   modules:
       label: Python
       widget: select
@@ -75,7 +77,6 @@ form:
   - csc_memory
   - csc_nvme
   - csc_time
-  - csc_gpu
   - csc_header_settings
   - modules
   - jp_type
