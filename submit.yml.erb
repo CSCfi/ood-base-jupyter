@@ -1,7 +1,7 @@
 # Job submission configuration file
 #
 ---
-
+<% n_gpus = csc_slurm_partition == "gpu" ? 1 : 0 %>
 #
 # Configure the content of the job script for the batch job here
 # @see http://www.rubydoc.info/gems/ood_core/OodCore/BatchConnect/Template
@@ -20,7 +20,7 @@ script:
       - '-t'
       - '<%= csc_time %>'
       - '--mem=<%= csc_memory %>G'
-      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>'
+      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>,gpu:v100:<%= n_gpus %>'
   # You can override the command used to query the hostname of the compute node
   # here
   #

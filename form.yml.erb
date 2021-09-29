@@ -37,8 +37,13 @@ attributes:
 
   csc_slurm_partition:
     value: "interactive"
-    ignore:
-      - "large"
+    select:
+      - "interactive"
+      - "small"
+      - "gpu"
+      - "test"
+    help: |
+      Selecting gpu partition will reserve 1 GPU (V100)
   modules:
       label: Python
       widget: select
@@ -54,17 +59,27 @@ attributes:
         - ["Lab","lab"]    
       value: "notebook"
       cacheable: false
-  csc_slurm_limits:
-    data:
-      partition: "interactive"
+  notebook_dir:
+    label: "Working directory"
+    widget: select
+    value: "/projappl"
+    options:
+      - "<%= ENV["HOME"] -%>"
+      - "/projappl"
+      - "/scratch"
+      - "/"
+
 form:
+  - csc_slurm_project
+  - csc_slurm_partition
+  - csc_header_resources
   - csc_cores
   - csc_memory
   - csc_nvme
-  - csc_slurm_project
-  - csc_slurm_partition
   - csc_time
+  - csc_header_settings
   - modules
   - jp_type
+  - notebook_dir
   - extra_jupyter_args
   - csc_slurm_limits

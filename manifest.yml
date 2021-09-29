@@ -1,6 +1,6 @@
 ---
-name: Jupyter 
-category: Interactive Apps
+name: Jupyter
+category: "Apps​"
 subcategory: Servers
 role: batch_connect
 description: |
