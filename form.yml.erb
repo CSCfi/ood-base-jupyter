@@ -51,6 +51,8 @@ attributes:
           - ["python-data"]
           - ["geoconda"]
           - ["python-env"]
+          - ["pytorch"]
+          - ["tensorflow"]
   jp_type:
       widget: select
       label: "Jupyter type"
@@ -59,6 +61,8 @@ attributes:
         - ["Lab","lab"]    
       value: "notebook"
       cacheable: false
+      help: |
+        `python-data`, `pytorch` and `tensorflow` only support Notebook
   notebook_dir:
     label: "Working directory"
     widget: select
