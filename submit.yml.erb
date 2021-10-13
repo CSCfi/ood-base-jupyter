@@ -1,7 +1,7 @@
 # Job submission configuration file
 #
 ---
-<% n_gpus = csc_slurm_partition == "gpu" ? 1 : 0 %>
+<% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
 #
 # Configure the content of the job script for the batch job here
 # @see http://www.rubydoc.info/gems/ood_core/OodCore/BatchConnect/Template
