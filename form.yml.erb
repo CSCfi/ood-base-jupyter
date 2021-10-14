@@ -41,9 +41,15 @@ attributes:
       - "interactive"
       - "small"
       - "gpu"
+      - "gputest"
       - "test"
     help: |
-      Selecting gpu partition will reserve 1 GPU (V100)
+      Selecting a gpu partition will reserve 1 GPU (V100)
+  csc_slurm_limits:
+    data:
+      limits:
+        gpu:
+          time: "8:00:00"
   modules:
       label: Python
       widget: select
@@ -51,6 +57,8 @@ attributes:
           - ["python-data"]
           - ["geoconda"]
           - ["python-env"]
+          - ["pytorch"]
+          - ["tensorflow"]
   jp_type:
       widget: select
       label: "Jupyter type"
@@ -59,6 +67,8 @@ attributes:
         - ["Lab","lab"]    
       value: "notebook"
       cacheable: false
+      help: |
+        `python-data`, `pytorch` and `tensorflow` only support Notebook
   notebook_dir:
     label: "Working directory"
     widget: select
