@@ -10,17 +10,37 @@ cd "${HOME}"
 # Start Jupyter Notebook Server
 #
 
-<%- unless context.modules.blank? -%>
+<%- unless context.python_module.blank? || context.python_module == "System" -%>
 # Purge the module environment to avoid conflicts
 module purge
 
 # Load the require modules
-module load <%= context.modules %>
+module load <%= context.python_module %>
+<%- end -%>
+
+<% unless context.extra_modules.blank? -%>
+# Load extra modules
+module load <%= context.extra_modules %>
+<% end -%>
 
 # List loaded modules
 module list
-<%- end -%>
 
+<% if context.advanced == "1" -%>
+  <% if context.custom_environment == "env_vars" -%>
+  #  echo "Setting PYTHONPATH=<%= context.python_path -%>"
+  #  export PYTHONPATH="<%= context.python_path -%>"
+    echo "Setting PYTHONUSERBASE=<%= context.userbase -%>"
+    export PYTHONUSERBASE="<%= context.userbase -%>"
+  <% elsif context.custom_environment == "venv" -%>
+    echo "Using venv <%= context.venv -%>"
+    source "<%= context.venv -%>/bin/activate"
+  <% end -%>
+
+  <% if context.python_no_user_site == "1" -%>
+    export PYTHONNOUSERSITE="TRUE"
+  <% end -%>
+<% end -%>
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 

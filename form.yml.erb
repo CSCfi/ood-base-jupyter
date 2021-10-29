@@ -32,8 +32,6 @@ attributes:
 
   # Any extra command line arguments to feed to the `jupyter notebook ...`
   # command that launches the Jupyter notebook within the batch job
-  extra_jupyter_args:
-      value: ""
 
   csc_slurm_partition:
     value: "interactive"
@@ -50,7 +48,7 @@ attributes:
       limits:
         gpu:
           time: "8:00:00"
-  modules:
+  python_module:
       label: Python
       widget: select
       options:
@@ -59,6 +57,7 @@ attributes:
           - ["python-env"]
           - ["pytorch"]
           - ["tensorflow"]
+          - ["System"]
   jp_type:
       widget: select
       label: "Jupyter type"
@@ -78,6 +77,61 @@ attributes:
       - "/projappl"
       - "/scratch"
       - "/"
+  advanced:
+    label: "Show advanced settings"
+    widget: check_box
+    value: "1"
+  custom_environment:
+    label: "Custom environment"
+    widget: select
+    value: "None"
+    options:
+      - ["None", "none"]
+      - ["Envionment variables", "env_vars"]
+      - ["venv"]
+    wrapper:
+      class: "advanced"
+  python_path:
+    widget: text_field
+    label: "PYTHONPATH"
+    cacheable: false
+    wrapper:
+      class: "advanced"
+  python_user_base:
+    widget: text_field
+    label: "User packages directory"
+    cacheable: false
+    wrapper:
+      class: "advanced"
+  python_no_user_site:
+    widget: check_box
+    label: "Enable user packages"
+    value: "0"
+    wrapper:
+      class: "advanced"
+  venv:
+    widget: text_field
+    label: "venv"
+    value : ""
+    wrapper:
+      class: "advanced"
+  venv_system_site_packages:
+    widget: check_box
+    label: "Enable --system-site-packages"
+    value: "1"
+    wrapper:
+      class: "advanced"
+  extra_modules:
+    widget: text_field
+    label: "Extra modules"
+    value : ""
+    wrapper:
+      class: "advanced"
+  extra_jupyter_args:
+    label: "Extra Jupyter args"
+    value: ""
+    wrapper:
+      class: "advanced"
 
 form:
   - csc_slurm_project
@@ -88,8 +142,14 @@ form:
   - csc_nvme
   - csc_time
   - csc_header_settings
-  - modules
+  - python_module
   - jp_type
   - notebook_dir
+  - advanced
+  - custom_environment
+  - python_user_base
+  - python_no_user_site
+  - venv
+  - extra_modules
   - extra_jupyter_args
   - csc_slurm_limits
