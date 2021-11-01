@@ -96,31 +96,31 @@ attributes:
     label: "PYTHONPATH"
     cacheable: false
     wrapper:
-      class: "advanced"
+      class: "advanced env-vars"
   python_user_base:
     widget: text_field
     label: "User packages directory"
     cacheable: false
     wrapper:
-      class: "advanced"
+      class: "advanced env-vars"
   python_no_user_site:
     widget: check_box
     label: "Enable user packages"
     value: "0"
     wrapper:
-      class: "advanced"
+      class: "advanced env-vars"
   venv:
     widget: text_field
     label: "venv"
     value : ""
     wrapper:
-      class: "advanced"
+      class: "advanced venv"
   venv_system_site_packages:
     widget: check_box
     label: "Enable --system-site-packages"
     value: "1"
     wrapper:
-      class: "advanced"
+      class: "advanced venv"
   extra_modules:
     widget: text_field
     label: "Extra modules"
