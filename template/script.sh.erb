@@ -32,9 +32,30 @@ module list
   #  export PYTHONPATH="<%= context.python_path -%>"
     echo "Setting PYTHONUSERBASE=<%= context.userbase -%>"
     export PYTHONUSERBASE="<%= context.userbase -%>"
-  <% elsif context.custom_environment == "venv" -%>
-    echo "Using venv <%= context.venv -%>"
-    source "<%= context.venv -%>/bin/activate"
+  <% elsif context.custom_environment == "venv" && !context.venv.blank? -%>
+    root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
+    if [[ "$root_dir" != "scratch" && "$root_dir" != "projappl" && "$root_dir" != fmi ]]; then
+      echo "Virtual environment needs to be in /scratch/ or /projappl"
+      exit 1
+    fi
+    if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
+      echo "Activating venv at <%= context.venv -%>"
+      source "<%= context.venv -%>/bin/activate"
+    else
+      echo "Creating new venv at <%= context.venv -%>"
+      <% if context.python_module == "System" -%>
+        python=$(which python3)
+      <% else -%>
+        python=$(which python)
+      <% end %>
+      $python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.venv_system_site_packages == "1" %>
+      echo "Activating created venv at <%= context.venv -%>"
+      source "<%= context.venv -%>/bin/activate"
+      if [[ ! $(command -v jupyter) ]]; then
+        echo "Installing jupyterlab"
+        python -m pip install jupyterlab
+      fi
+    fi
   <% end -%>
 
   <% if context.python_no_user_site == "1" -%>
