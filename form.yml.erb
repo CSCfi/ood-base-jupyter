@@ -114,9 +114,9 @@ attributes:
     label: "Enable user packages"
     value: "0"
     wrapper:
-      class: "advanced env-vars"
+      class: "advanced"
     help: |
-      Disable to use only packages found in the loaded module. Installing packages won't be possible.
+      Enables using packages installed to the user packages directory. When disabled only virtual environment supports installing packages.
   venv:
     widget: text_field
     label: "Virtual environment path"
@@ -162,9 +162,9 @@ form:
   - advanced
   - custom_environment
   - python_user_base
-  - python_no_user_site
   - venv
   - venv_system_site_packages
+  - python_no_user_site
   - extra_modules
   - extra_jupyter_args
   - csc_slurm_limits

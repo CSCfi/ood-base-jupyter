@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Checkboxes dont support setting wrapper class
   const user_sites_checkbox = $("#batch_connect_session_context_python_no_user_site");
-  user_sites_checkbox.parent().parent().addClass("advanced env-vars");
+  user_sites_checkbox.parent().parent().addClass("advanced");
 
   const system_site_packages_checkbox = $("#batch_connect_session_context_venv_system_site_packages");
   system_site_packages_checkbox.parent().parent().addClass("advanced venv");
