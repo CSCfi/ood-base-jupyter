@@ -42,29 +42,32 @@ module list
       echo "Activating venv at <%= context.venv -%>"
       source "<%= context.venv -%>/bin/activate"
     else
-      echo "Creating new venv at <%= context.venv -%>"
+      echo "Creating new venv at <%= context.venv %>"
       <% if context.python_module == "System" -%>
-        python=$(which python3)
+      python=$(which python3)
       <% else -%>
-        python=$(which python)
+      python=$(which python)
       <% end %>
       $python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.venv_system_site_packages == "1" %>
       echo "Activating created venv at <%= context.venv -%>"
       source "<%= context.venv -%>/bin/activate"
+      python -m pip install ipykernel
+      ipython kernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
       if [[ ! $(command -v jupyter) ]]; then
         echo "Installing jupyterlab"
         python -m pip install jupyterlab
       fi
     fi
+    export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
   <% end -%>
 
   <% if context.python_no_user_site == "1" -%>
     export PYTHONNOUSERSITE="TRUE"
   <% end -%>
 <% end -%>
+
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
-
 # Launch the Jupyter Notebook Server
 set -x
 jupyter <%= context.jp_type %> --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
