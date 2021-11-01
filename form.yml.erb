@@ -109,7 +109,7 @@ attributes:
       class: "advanced env-vars"
     help: |
       Directory for installing user packages using `pip install --user` (sets PYTHONUSERBASE)
-  python_no_user_site:
+  python_user_site:
     widget: check_box
     label: "Enable user packages"
     value: "0"
@@ -164,7 +164,7 @@ form:
   - python_user_base
   - venv
   - venv_system_site_packages
-  - python_no_user_site
+  - python_user_site
   - extra_modules
   - extra_jupyter_args
   - csc_slurm_limits
