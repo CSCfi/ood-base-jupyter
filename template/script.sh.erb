@@ -51,7 +51,8 @@ module list
       $python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.venv_system_site_packages == "1" %>
       echo "Activating created venv at <%= context.venv -%>"
       source "<%= context.venv -%>/bin/activate"
-      python -m pip install ipykernel
+      python -m pip install --ignore-installed ipykernel
+
       ipython kernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
       if [[ ! $(command -v jupyter) ]]; then
         echo "Installing jupyterlab"
