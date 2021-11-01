@@ -87,10 +87,14 @@ attributes:
     value: "None"
     options:
       - ["None", "none"]
-      - ["Environment variables", "env_vars"]
+      - ["User packages", "env_vars"]
       - ["venv"]
     wrapper:
       class: "advanced"
+    help: |
+      Selecting `None` allows using other Python environment modules than provided earlier in the form. 
+      Selecting `User packages` allows changing the directory where packages are installed using `pip install --user`.  
+      Selecting `venv` allows creating a [virtual environment](https://docs.python.org/3/library/venv.html).  
   python_path:
     widget: text_field
     label: "PYTHONPATH"
@@ -103,30 +107,40 @@ attributes:
     cacheable: false
     wrapper:
       class: "advanced env-vars"
+    help: |
+      Directory for installing user packages using `pip install --user` (sets PYTHONUSERBASE)
   python_no_user_site:
     widget: check_box
     label: "Enable user packages"
     value: "0"
     wrapper:
       class: "advanced env-vars"
+    help: |
+      Disable to use only packages found in the loaded module. Installing packages won't be possible.
   venv:
     widget: text_field
-    label: "venv"
+    label: "Virtual environment path"
     value : ""
     wrapper:
       class: "advanced venv"
+    help: |
+      Path to a virtual environment under `/scratch` or `/projappl`. A new virtual environment will be created using `python -m venv <path>` it does not exist.
   venv_system_site_packages:
     widget: check_box
     label: "Enable --system-site-packages"
     value: "1"
     wrapper:
       class: "advanced venv"
+    help: |
+      Enables using site packages from the loaded module when creating a new virtual environment.
   extra_modules:
     widget: text_field
     label: "Extra modules"
     value : ""
     wrapper:
       class: "advanced"
+    help: |
+      Extra modules to load, separated by space. Load custom modules containing Python installations here.
   extra_jupyter_args:
     label: "Extra Jupyter args"
     value: ""
