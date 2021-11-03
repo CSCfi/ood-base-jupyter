@@ -62,7 +62,7 @@ module list
     export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
   <% end -%>
 
-  <% if context.python_no_user_site == "1" -%>
+  <% if context.python_user_site == "0" -%>
     export PYTHONNOUSERSITE="TRUE"
   <% end -%>
 <% end -%>
