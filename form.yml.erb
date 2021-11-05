@@ -87,7 +87,6 @@ attributes:
     value: "None"
     options:
       - ["None", "none"]
-      - ["User packages", "env_vars"]
       - ["venv"]
     wrapper:
       class: "advanced"
@@ -101,14 +100,6 @@ attributes:
     cacheable: false
     wrapper:
       class: "advanced env-vars"
-  python_user_base:
-    widget: text_field
-    label: "User packages directory"
-    cacheable: false
-    wrapper:
-      class: "advanced env-vars"
-    help: |
-      Directory for installing user packages using `pip install --user` (sets PYTHONUSERBASE)
   python_user_site:
     widget: check_box
     label: "Enable user packages"
@@ -161,7 +152,6 @@ form:
   - notebook_dir
   - advanced
   - custom_environment
-  - python_user_base
   - venv
   - venv_system_site_packages
   - python_user_site
