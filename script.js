@@ -3,9 +3,6 @@ $(document).ready(function () {
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
   user_sites_checkbox.parent().parent().addClass("advanced");
 
-  const system_site_packages_checkbox = $("#batch_connect_session_context_venv_system_site_packages");
-  system_site_packages_checkbox.parent().parent().addClass("advanced venv");
-
   const show_advanced = $("#batch_connect_session_context_advanced");
 
   show_advanced.change(update_advanced);

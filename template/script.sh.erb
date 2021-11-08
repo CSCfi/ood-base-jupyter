@@ -62,7 +62,9 @@ module list
       python=$(which python)
       <% end %>
 
-      $python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.venv_system_site_packages == "1" %>
+      # --system-site-packages does not work properly with the module system
+      # packages from the module are added if module is loaded when activating venv
+      $python -m venv "<%= context.venv -%>" # <%# "--system-site-packages" if context.venv_system_site_packages == "1" %>
 
       echo "Activating created venv at <%= context.venv -%>"
       source "<%= context.venv -%>/bin/activate"
