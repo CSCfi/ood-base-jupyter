@@ -3,13 +3,15 @@ $(document).ready(function () {
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
   user_sites_checkbox.parent().parent().addClass("advanced");
 
+  const venv_checkbox = $("#batch_connect_session_context_enable_venv");
+  venv_checkbox.parent().parent().addClass("advanced");
+
   const show_advanced = $("#batch_connect_session_context_advanced");
 
   show_advanced.change(update_advanced);
   update_advanced();
 
-  const custom_env = $("#batch_connect_session_context_custom_environment");
-  custom_env.change(update_advanced);
+  venv_checkbox.change(update_advanced);
 
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
@@ -22,9 +24,8 @@ function update_advanced() {
 
   update_visibility(".advanced", show);
 
-  const custom_env = $("#batch_connect_session_context_custom_environment").val();
-  update_visibility(".env-vars", show && custom_env == "env_vars");
-  update_visibility(".venv", show && custom_env == "venv");
+  const venv = $("#batch_connect_session_context_enable_venv").prop("checked");
+  update_visibility(".venv", show && venv);
 }
 
 function update_visibility(selector, show) {

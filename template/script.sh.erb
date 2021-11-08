@@ -28,7 +28,7 @@ module list
 
 # Only enable advanced functionality if checkbox is checked
 <% if context.advanced == "1" -%>
-  <% if context.custom_environment == "venv" && !context.venv.blank? -%>
+  <% if context.enable_venv == "1" && !context.venv.blank? -%>
 
     # Check if Python installation is inside Singularity container
     PY_INT_REF=$(dirname $(python -c 'import sys;print(sys.executable)'))

@@ -85,18 +85,6 @@ attributes:
     label: "Show advanced settings"
     widget: check_box
     value: "0"
-  custom_environment:
-    label: "Custom environment"
-    widget: select
-    value: "None"
-    options:
-      - ["None", "none"]
-      - ["venv"]
-    wrapper:
-      class: "advanced"
-    help: |
-      Selecting `None` allows using other Python environment modules than provided earlier in the form.  
-      Selecting `venv` allows creating a [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
   python_path:
     widget: text_field
     label: "PYTHONPATH"
@@ -111,6 +99,14 @@ attributes:
       class: "advanced"
     help: |
       Enables using packages installed to the user packages directory. When disabled only virtual environment supports installing packages.
+  enable_venv:
+    widget: check_box
+    label: "Use virtual environment"
+    value: "1"
+    wrapper:
+      class: "advanced venv"
+    help: |
+      Create or use existing [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
   venv:
     widget: text_field
     label: "Virtual environment path"
@@ -154,7 +150,7 @@ form:
   - jp_type
   - notebook_dir
   - advanced
-  - custom_environment
+  - enable_venv
   - venv
   - python_user_site
   - extra_modules
