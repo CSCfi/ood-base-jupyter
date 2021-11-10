@@ -59,9 +59,15 @@ attributes:
           - ["python-env"]
           - ["pytorch"]
           - ["tensorflow"]
-          - ["System"]
-      help: |
-        System python has no Jupyter installed, only custom environment using `venv` is supported.
+          - ["Custom"]
+  custom_module:
+    widget: text_field
+    label: "Custom Python module"
+    value : ""
+    wrapper:
+      class: "custom_module"
+    help: |
+      Use a different Python module than the modules in the list. Leave empty to use the system Python. Virtual environment must be used when using system python.
   jp_type:
       widget: select
       label: "Jupyter type"
@@ -85,26 +91,24 @@ attributes:
     label: "Show advanced settings"
     widget: check_box
     value: "0"
-  python_path:
-    widget: text_field
-    label: "PYTHONPATH"
-    cacheable: false
-    wrapper:
-      class: "advanced env-vars"
   python_user_site:
     widget: check_box
     label: "Enable user packages"
     value: "0"
-    wrapper:
-      class: "advanced"
     help: |
-      Enables using packages installed to the user packages directory. When disabled only virtual environment supports installing packages.
+      Enables using packages installed to the user packages directory.
+  python_user_base:
+    widget: text_field
+    label: "User packages path"
+    value : ""
+    wrapper:
+      class: "advanced user_packages user_packages_field"
+    help: |
+      Path to a directory to install user packages in under `/scratch` or `/projappl`.
   enable_venv:
     widget: check_box
     label: "Use virtual environment"
     value: "1"
-    wrapper:
-      class: "advanced venv"
     help: |
       Create or use existing [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
   venv:
@@ -115,22 +119,6 @@ attributes:
       class: "advanced venv"
     help: |
       Path to a virtual environment under `/scratch` or `/projappl`. A new virtual environment will be created using `python -m venv <path>` if it does not exist.
-  venv_system_site_packages:
-    widget: check_box
-    label: "Enable --system-site-packages"
-    value: "1"
-    wrapper:
-      class: "advanced venv"
-    help: |
-      Enables using site packages from the loaded module when creating a new virtual environment.
-  extra_modules:
-    widget: text_field
-    label: "Extra modules"
-    value : ""
-    wrapper:
-      class: "advanced"
-    help: |
-      Extra modules to load, separated by space. Load custom modules containing Python installations here.
   extra_jupyter_args:
     label: "Extra Jupyter args"
     value: ""
@@ -147,12 +135,13 @@ form:
   - csc_time
   - csc_header_settings
   - python_module
+  - custom_module
   - jp_type
   - notebook_dir
   - advanced
   - enable_venv
   - venv
   - python_user_site
-  - extra_modules
+  - python_user_base
   - extra_jupyter_args
   - csc_slurm_limits

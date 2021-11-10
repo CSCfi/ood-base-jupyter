@@ -1,20 +1,23 @@
 $(document).ready(function () {
   // Checkboxes dont support setting wrapper class
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
-  user_sites_checkbox.parent().parent().addClass("advanced");
+  user_sites_checkbox.parent().parent().addClass("advanced user_packages");
 
   const venv_checkbox = $("#batch_connect_session_context_enable_venv");
   venv_checkbox.parent().parent().addClass("advanced");
 
   const show_advanced = $("#batch_connect_session_context_advanced");
+  const python_module = $("#batch_connect_session_context_python_module");
 
   show_advanced.change(update_advanced);
-  update_advanced();
-
   venv_checkbox.change(update_advanced);
+  user_sites_checkbox.change(update_advanced);
+  python_module.change(update_advanced);
+  update_advanced();
 
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
+  venv_checkbox.change(validate_venv);
 });
 
 function update_advanced() {
@@ -26,6 +29,14 @@ function update_advanced() {
 
   const venv = $("#batch_connect_session_context_enable_venv").prop("checked");
   update_visibility(".venv", show && venv);
+  update_visibility(".user_packages", show && !venv);
+
+  const user_packages_enabled = $("#batch_connect_session_context_python_user_site").prop("checked");
+  update_visibility(".user_packages_field", show && !venv && user_packages_enabled);
+
+  const custom_python = $("#batch_connect_session_context_python_module").val() === "Custom";
+  update_visibility(".custom_module", custom_python);
+
 }
 
 function update_visibility(selector, show) {
@@ -38,6 +49,12 @@ function update_visibility(selector, show) {
 
 function validate_venv() {
   const venv = $("#batch_connect_session_context_venv");
+  const venv_enabled = $("#batch_connect_session_context_enable_venv").prop("checked");
+  if (!venv_enabled) {
+    venv[0].setCustomValidity("");
+    venv[0].reportValidity();
+    return;
+  }
   if (venv.length) {
     check_venv(venv.val(),
       () => {
