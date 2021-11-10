@@ -113,8 +113,9 @@ module list
 
     # Set JUPYTER_DATA_DIR to find kernels from this venv
     export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
+  <% end -%>
 
-  <% elsif context.python_user_site == "0" -%>
+  <% if context.python_user_site == "0" -%>
     echo "Disabling user packages"
     export PYTHONNOUSERSITE="TRUE"
   <% elsif !context.python_user_base.blank? -%>
