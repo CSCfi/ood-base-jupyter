@@ -32,8 +32,6 @@ attributes:
 
   # Any extra command line arguments to feed to the `jupyter notebook ...`
   # command that launches the Jupyter notebook within the batch job
-  extra_jupyter_args:
-      value: ""
 
   csc_slurm_partition:
     value: "interactive"
@@ -52,7 +50,7 @@ attributes:
       limits:
         gpu:
           time: "8:00:00"
-  modules:
+  python_module:
       label: Python
       widget: select
       options:
@@ -61,16 +59,25 @@ attributes:
           - ["python-env"]
           - ["pytorch"]
           - ["tensorflow"]
+          - ["Custom"]
+  custom_module:
+    widget: text_field
+    label: "Custom Python module"
+    value : ""
+    wrapper:
+      class: "custom_module"
+    help: |
+      Use a different Python module than the modules in the list. Leave empty to use the system Python. Virtual environment must be used when using system python.
   jp_type:
       widget: select
       label: "Jupyter type"
       options:
         - ["Notebook","notebook"]
-        - ["Lab","lab"]    
+        - ["Lab","lab"]
       value: "notebook"
       cacheable: false
       help: |
-        `python-data`, `pytorch` and `tensorflow` only support Notebook
+        `python-env` only supports Notebook
   notebook_dir:
     label: "Working directory"
     widget: select
@@ -80,6 +87,45 @@ attributes:
       - "/projappl"
       - "/scratch"
       - "/"
+  advanced:
+    label: "Show advanced settings"
+    widget: check_box
+    value: "0"
+  python_user_site:
+    widget: check_box
+    label: "Enable user packages"
+    value: "0"
+    help: |
+      Enables using packages installed to the user packages directory.
+  python_user_base:
+    widget: text_field
+    label: "User packages path"
+    value : ""
+    wrapper:
+      class: "advanced user_packages user_packages_field"
+    help: |
+      Path to a directory to install user packages in under `/scratch` or `/projappl`.
+  enable_venv:
+    widget: check_box
+    label: "Use virtual environment"
+    value: "1"
+    help: |
+      Create or use existing [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
+  venv:
+    widget: text_field
+    label: "Virtual environment path"
+    value : ""
+    wrapper:
+      class: "advanced venv"
+    help: |
+      Path to a virtual environment under `/scratch` or `/projappl`. A new virtual environment will be created using `python -m venv <path>` if it does not exist.
+  extra_jupyter_args:
+    label: "Extra Jupyter args"
+    value: ""
+    wrapper:
+      class: "advanced"
+  csc_reset_cache:
+    app: "sys/ood-base-jupyter"
 
 form:
   - csc_slurm_project
@@ -90,8 +136,15 @@ form:
   - csc_nvme
   - csc_time
   - csc_header_settings
-  - modules
+  - python_module
+  - custom_module
   - jp_type
   - notebook_dir
+  - advanced
+  - enable_venv
+  - venv
+  - python_user_site
+  - python_user_base
   - extra_jupyter_args
+  - csc_reset_cache
   - csc_slurm_limits
