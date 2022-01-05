@@ -3,7 +3,7 @@ OOD interactive app that launches a Jupyter Notebook / Lab server.
 Basic functionality consists of launching Jupyter with Python from one of the modules available.
 Advanced functionality allows creating or using virtual environments based on the modules and configuring the user packages path.
 
-The app requires ood-util and ood-initializers to work.
+The app requires [ood-util](https://github.com/CSCfi/ood-util) and [ood-initializers](https://github.com/CSCfi/ood-initializers) to work.
 
 ## Virtual environments
 
