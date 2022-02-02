@@ -45,6 +45,15 @@ attributes:
       - "fmitest"
     help: |
       Selecting a gpu partition will reserve 1 GPU (V100)
+  csc_slurm_reservation:
+    partitions:
+      - "interactive"
+      - "small"
+      - "gpu"
+      - "gputest"
+      - "test"
+      - "fmi"
+      - "fmitest"
   csc_slurm_limits:
     data:
       limits:
@@ -83,7 +92,7 @@ attributes:
       - "/scratch"
       - "/"
   advanced:
-    label: "Show advanced settings"
+    label: "Enable advanced settings"
     widget: check_box
     value: "0"
   python_user_site:
@@ -123,6 +132,7 @@ attributes:
     app: "sys/ood-base-jupyter"
 
 form:
+  - csc_slurm_reservation
   - csc_slurm_project
   - csc_slurm_partition
   - csc_header_resources
