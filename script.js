@@ -1,4 +1,4 @@
-$(document).ready(function () {
+(function () {
   // Checkboxes dont support setting wrapper class
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
   user_sites_checkbox.parent().parent().addClass("advanced");
@@ -16,7 +16,7 @@ $(document).ready(function () {
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
   venv_checkbox.change(validate_venv);
-});
+})();
 
 function update_advanced() {
   const show_advanced = $("#batch_connect_session_context_advanced");
