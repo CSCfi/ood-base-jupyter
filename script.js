@@ -1,4 +1,10 @@
 (function () {
+
+  // Hide custom python module field when custom is not selected
+  const python_module = $("#batch_connect_session_context_python_module");
+  python_module.change(update_custom_module);
+  update_custom_module();
+
   // Checkboxes dont support setting wrapper class
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
   user_sites_checkbox.parent().parent().addClass("advanced");
@@ -31,6 +37,11 @@ function update_advanced() {
   const user_packages_enabled = $("#batch_connect_session_context_python_user_site").prop("checked");
   update_visibility(".user_packages_field", show && user_packages_enabled);
 
+}
+
+function update_custom_module() {
+  const python_module = $("#batch_connect_session_context_python_module").val();
+  update_visibility(".custom_module", python_module === "Custom");
 }
 
 function update_visibility(selector, show) {
