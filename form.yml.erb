@@ -84,14 +84,13 @@ attributes:
         - ["Notebook","notebook"]
         - ["Lab","lab", data-option-for-python-module-python-env: false]
       value: "notebook"
-  notebook_dir:
+  csc_path:
+    submit: notebook_dir
     label: "Working directory"
-    widget: select
-    value: "/projappl"
-    options:
-      - "<%= ENV["HOME"] -%>"
-      - "/projappl"
-      - "/scratch"
+    paths:
+      - "HOME"
+      - "SCRATCH"
+      - "PROJAPPL"
       - "/"
   advanced:
     label: "Enable advanced settings"
@@ -146,7 +145,7 @@ form:
   - python_module
   - custom_module
   - jp_type
-  - notebook_dir
+  - csc_path
   - advanced
   - enable_venv
   - venv
