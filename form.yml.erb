@@ -63,16 +63,18 @@ attributes:
       label: Python
       widget: select
       options:
-          - ["python-data", data-hide-custom-module: true]
-          - ["geoconda", data-hide-custom-module: true]
-          - ["python-env", data-hide-custom-module: true]
-          - ["pytorch", data-hide-custom-module: true]
-          - ["tensorflow", data-hide-custom-module: true]
+          - ["python-data"]
+          - ["geoconda"]
+          - ["python-env"]
+          - ["pytorch"]
+          - ["tensorflow"]
           - ["Custom"]
   custom_module:
     widget: text_field
     label: "Custom Python module"
     value : ""
+    wrapper:
+      class: "custom_module"
     help: |
       Use a different Python module than the modules in the list. Leave empty to use the system Python. Virtual environment must be used when using system python.
   jp_type:
@@ -82,14 +84,13 @@ attributes:
         - ["Notebook","notebook"]
         - ["Lab","lab", data-option-for-python-module-python-env: false]
       value: "notebook"
-  notebook_dir:
+  csc_path:
+    submit: notebook_dir
     label: "Working directory"
-    widget: select
-    value: "/projappl"
-    options:
-      - "<%= ENV["HOME"] -%>"
-      - "/projappl"
-      - "/scratch"
+    paths:
+      - "HOME"
+      - "SCRATCH"
+      - "PROJAPPL"
       - "/"
   advanced:
     label: "Enable advanced settings"
@@ -144,7 +145,7 @@ form:
   - python_module
   - custom_module
   - jp_type
-  - notebook_dir
+  - csc_path
   - advanced
   - enable_venv
   - venv
