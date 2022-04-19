@@ -126,9 +126,22 @@ module list
   <% end -%>
 <% end -%>
 
+jp_type="lab"
+# Check if JupyterLab version is higher than 3.0.0
+has_jupyterlab=$(python -c 'from packaging import version;import jupyterlab; print(version.parse(jupyterlab.__version__) >= version.parse("3.0.0"))')
+if [[ "$has_jupyterlab" == "True" ]]; then
+  # Some modules don't have the extensions enabled, enable them for user
+  python -m jupyter server extension enable --user --py nbclassic
+  python -m jupyter server extension enable --user --py jupyterlab
+else
+  # Fall back to notebook if Jupyter Lab isn't installed or too old version
+  sed -i 's/\.ServerApp\./.NotebookApp./g' $CONFIG_FILE
+  sed -i 's/\.root_dir/.notebook_dir/g' $CONFIG_FILE
+  jp_type="notebook"
+fi
 
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
-python -m jupyter <%= context.jp_type %> --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
+python -m jupyter $jp_type --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
