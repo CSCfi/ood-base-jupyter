@@ -131,8 +131,12 @@ attributes:
       class: "advanced"
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
+  csc_extra_desc:
+    desc: |
+      <a href="https://docs.csc.fi/computing/webinterface/jupyter/" target="_blank">Documentation</a>
 
 form:
+  - csc_extra_desc
   - csc_slurm_reservation
   - csc_slurm_project
   - csc_slurm_partition

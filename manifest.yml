@@ -1,7 +1,6 @@
 ---
 name: Jupyter
-#<200b> is an invisible space to differentiate this category from OODs Apps category which is hidden
-category: "Apps​"
+category: "Apps"
 subcategory: Servers
 role: batch_connect
 description: |

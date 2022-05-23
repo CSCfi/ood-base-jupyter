@@ -2,6 +2,9 @@
 #
 ---
 <% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
+<% gres = [] %>
+<% gres.push("nvme:#{csc_nvme}") if csc_nvme.to_i > 0 %>
+<% gres.push("gpu:v100:#{n_gpus}") if n_gpus > 0 %>
 #
 # Configure the content of the job script for the batch job here
 # @see http://www.rubydoc.info/gems/ood_core/OodCore/BatchConnect/Template
@@ -11,6 +14,8 @@ batch_connect:
   #
   # @note Do not change this unless you know what you are doing!
   template: "basic"
+  conn_params:
+    - jp_type
 script:
   # accounting_id: '<%# csc_slurm_account %>'
   # queue_name: '<%# csc_slurm_partition %>'
@@ -20,7 +25,9 @@ script:
       - '-t'
       - '<%= csc_time %>'
       - '--mem=<%= csc_memory %>G'
-      - '--gres=nvme:<%= csc_nvme.blank? ? 0 : csc_nvme %>,gpu:v100:<%= n_gpus %>'
+      <% unless gres.empty? %>
+      - '--gres=<%= gres.join(",") -%>'
+      <% end %>
   # You can override the command used to query the hostname of the compute node
   # here
   #

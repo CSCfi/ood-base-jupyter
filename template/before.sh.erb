@@ -43,19 +43,23 @@ PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print
 # `script.sh.erb` file when launching the Jupyter Notebook server.
 export CONFIG_FILE="${PWD}/config.py"
 
+# Export jp_type for view.html.erb
+export jp_type="<%= context.jp_type -%>"
+
 # Generate Jupyter configuration file with secure file permissions
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
-c.NotebookApp.ip = '*'
-c.NotebookApp.port = ${port}
-c.NotebookApp.port_retries = 0
-c.NotebookApp.password = u'sha1:${SALT}:${PASSWORD_SHA1}'
-c.NotebookApp.base_url = '/node/${host}/${port}/'
-c.NotebookApp.open_browser = False
-c.NotebookApp.allow_origin = '*'
-c.NotebookApp.notebook_dir = '<%= context.notebook_dir -%>'
-c.NotebookApp.disable_check_xsrf = True
-c.NotebookApp.allow_remote_access = True
+c.ServerApp.ip = '*'
+c.ServerApp.port = ${port}
+c.ServerApp.port_retries = 0
+c.ServerApp.password = u'sha1:${SALT}:${PASSWORD_SHA1}'
+c.ServerApp.base_url = '/node/${host}/${port}/'
+c.ServerApp.open_browser = False
+c.ServerApp.allow_origin = '*'
+c.ServerApp.root_dir = '<%= context.notebook_dir -%>'
+c.ServerApp.disable_check_xsrf = True
+c.ServerApp.allow_remote_access = True
+c.FileContentsManager.delete_to_trash = False
 EOL
 )
