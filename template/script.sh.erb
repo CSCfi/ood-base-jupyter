@@ -42,7 +42,8 @@ module list
     # Verify that venv is not in home folder
     root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
     if [[ "$root_dir" != "scratch" && "$root_dir" != "projappl" && "$root_dir" != fmi ]]; then
-      echo "Virtual environment needs to be in /scratch/ or /projappl"
+      echo "Virtual environment needs to be in /scratch/ or /projappl/" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
+      scancel "$SLURM_JOB_ID"
       exit 1
     fi
     if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
@@ -64,7 +65,13 @@ module list
 
       # --system-site-packages does not work properly with the module system
       # packages from the module are added if module is loaded when activating venv
-      $python -m venv "<%= context.venv -%>" --system-site-packages
+      error_msg=$($python -m venv "<%= context.venv -%>" --system-site-packages 2>&1 > /dev/null)
+      return_code="$?"
+      if [[ "$return_code" ]];then
+        echo "Could not create venv: $error_msg" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
+        scancel "$SLURM_JOB_ID"
+        exit 1
+      fi
 
       echo "Activating created venv at <%= context.venv -%>"
 
