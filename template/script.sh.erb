@@ -9,19 +9,18 @@ cd "${HOME}"
 #
 # Start Jupyter Notebook Server
 #
+#
+# Purge the module environment to avoid conflicts
+module purge
 
-<%- unless context.python_module.blank? || context.python_module == "Custom" -%>
-  # Purge the module environment to avoid conflicts
-  module purge
-
-# Load the require modules
-module load <%= context.python_module %>
+<% python_module = "" %>
+<% if context.python_module == "Custom" -%>
+  <% python_module = context.custom_module %>
+<%- else -%>
+  <% python_module = context.python_module %>
 <%- end -%>
 
-<% if context.python_module == "Custom" && !context.custom_module.blank? -%>
-  # Load extra modules
-  module load <%= context.custom_module %>
-<% end -%>
+module load <%= python_module %>
 
 # List loaded modules
 module list
@@ -125,6 +124,16 @@ module list
   <% if context.python_user_site == "0" -%>
     echo "Disabling user packages"
     export PYTHONNOUSERSITE="TRUE"
+    # pytorch is known to require enabled user packages to find Jupyter, do a quick test for other modules
+    if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
+      if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
+        echo "Jupyter is installed only in user packages but user packages are disabled"
+        <% if python_module.include?("pytorch") %>
+          echo "Using pytorch module, enabling user packages again"
+          unset PYTHONNOUSERSITE
+        <% end %>
+      fi
+    fi
   <% elsif !context.python_user_base.blank? -%>
     echo "Using <%= context.python_user_base -%> for user packages"
     mkdir -p "<%= context.python_user_base -%>"
