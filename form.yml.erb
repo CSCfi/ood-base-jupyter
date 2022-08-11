@@ -91,13 +91,13 @@ attributes:
       - "PROJAPPL"
       - "/"
   advanced:
-    label: "Enable advanced settings"
+    label: "Show advanced settings"
     widget: check_box
     value: "0"
   python_user_site:
     widget: check_box
     label: "Enable user packages"
-    value: "0"
+    value: "1"
     help: |
       Enables using packages installed to the user packages directory.
   python_user_base:
@@ -111,7 +111,7 @@ attributes:
   enable_venv:
     widget: check_box
     label: "Use virtual environment"
-    value: "1"
+    value: "0"
     help: |
       Create or use existing [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
   venv:
