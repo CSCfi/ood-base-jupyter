@@ -54,9 +54,12 @@ module list
     fi
   else
     echo "Creating new venv at <%= context.venv %>"
-    # Use python3 to create the venv if using system python
+    # Use python3.9 to create the venv if using system python
     <% if context.python_module == "Custom" -%>
       python=$(which python3)
+      if [[ $python == /usr/bin/python3 ]]; then 
+        python=/usr/bin/python3.9; 
+      fi
     <% else -%>
       python=$(which python)
     <% end %>
