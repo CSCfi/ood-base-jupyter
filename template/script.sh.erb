@@ -54,9 +54,12 @@ module list
     fi
   else
     echo "Creating new venv at <%= context.venv %>"
-    # Use python3 to create the venv if using system python
+    # Use python3.9 to create the venv if using system python
     <% if context.python_module == "Custom" -%>
       python=$(which python3)
+      if [[ $python == /usr/bin/python3 ]]; then 
+        python=/usr/bin/python3.9; 
+      fi
     <% else -%>
       python=$(which python)
     <% end %>
@@ -65,7 +68,7 @@ module list
     # packages from the module are added if module is loaded when activating venv
     error_msg=$($python -m venv "<%= context.venv -%>" --system-site-packages 2>&1 > /dev/null)
     return_code="$?"
-    if [[ "$return_code" ]];then
+    if [[ ! "$return_code" -eq 0 ]];then
       echo "Could not create venv: $error_msg" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
       scancel "$SLURM_JOB_ID"
       exit 1
@@ -107,6 +110,9 @@ module list
     fi
 
     # Install jupyterlab if there is no jupyter installed (system python only)
+    <% if context.python_user_site == "0" -%>
+    export PYTHONNOUSERSITE="TRUE"
+    <% end -%>
     if [[ ! $(command -v jupyter) ]]; then
       echo "Installing jupyterlab"
       python -m pip install jupyterlab
