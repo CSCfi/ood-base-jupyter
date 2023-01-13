@@ -172,4 +172,6 @@ fi
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
+echo "PATH IS: $PATH"
+echo "PYTHON FROM $(which python)" 
 python -m jupyter $jp_type --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
