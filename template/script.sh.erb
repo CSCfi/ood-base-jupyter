@@ -23,7 +23,7 @@ module purge
 
 # Adds the full bin directory for the 
 <% if context.python_module == "CustomPath" -%>
-    export PATH=$(dirname <% context.custom_path %>):$PATH
+    export PATH=$(dirname <%= context.custom_path %>):$PATH
     echo "USING CUSTOM PYTHON"
 <%- else -%>
     module load <%= python_module %>
