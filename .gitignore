@@ -1,0 +1,7 @@
+*~
+.*.swo
+.*.swp
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
