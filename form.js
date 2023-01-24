@@ -5,16 +5,12 @@
   python_module.change(update_custom_module);
   update_custom_module();
 
-  // Checkboxes dont support setting wrapper class
-  const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
-  user_sites_checkbox.parent().parent().addClass("advanced");
-
-
   const show_advanced = $("#batch_connect_session_context_advanced");
 
   show_advanced.change(update_advanced);
-  user_sites_checkbox.change(update_advanced);
   update_advanced();
+  const venv = $("#batch_connect_session_context_venv");
+  venv.change(validate_venv);
 
 })();
 
@@ -50,12 +46,6 @@ function update_visibility(selector, show) {
 
 function validate_venv() {
   const venv = $("#batch_connect_session_context_venv");
-  const venv_enabled = $("#batch_connect_session_context_enable_venv").prop("checked");
-  if (!venv_enabled) {
-    venv[0].setCustomValidity("");
-    venv[0].reportValidity();
-    return;
-  }
   if (venv.length) {
     check_venv(venv.val(),
       () => {
