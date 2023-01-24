@@ -1,5 +1,5 @@
 ---
-name: Jupyter
+name: Jupyter-lumi-proto
 category: "Apps"
 subcategory: Servers
 role: batch_connect
