@@ -2,8 +2,8 @@
 
   // Hide custom python module field when custom is not selected
   const python_module = $("#batch_connect_session_context_python_module");
-  python_module.change(update_custom_module);
-  update_custom_module();
+  python_module.change(update_custom);
+  update_custom();
 
   // Checkboxes dont support setting wrapper class
   const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
@@ -39,9 +39,17 @@ function update_advanced() {
 
 }
 
+function update_custom(){
+  update_custom_module()
+  update_custom_path()
+}
 function update_custom_module() {
   const python_module = $("#batch_connect_session_context_python_module").val();
   update_visibility(".custom_module", python_module === "Custom");
+}
+function update_custom_path() {
+  const python_module = $("#batch_connect_session_context_python_module").val();
+  update_visibility(".custom_path", python_module === "CustomPath");
 }
 
 function update_visibility(selector, show) {

@@ -65,7 +65,17 @@ attributes:
           - ["geoconda"]
           - ["pytorch"]
           - ["tensorflow"]
-          - ["Custom"]
+          - ["Custom module","Custom"]
+          - ["Custom path","CustomPath"]
+  custom_path:
+    label: "Custom Python interpreter"
+    widget: text_field
+    value: ""
+    wrapper:
+      class: "custom_path"
+    help: |
+      Specify absolute path to python interpreter. 
+      E.g `/scratch/project_12345/myInstall/bin/python`
   custom_module:
     widget: text_field
     label: "Custom Python module"
@@ -145,6 +155,7 @@ form:
   - csc_header_settings
   - python_module
   - custom_module
+  - custom_path
   - jp_type
   - csc_path
   - advanced

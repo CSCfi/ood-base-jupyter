@@ -20,7 +20,15 @@ module purge
   <% python_module = context.python_module %>
 <%- end -%>
 
-module load <%= python_module %>
+
+# Adds the full bin directory for the 
+<% if context.python_module == "CustomPath" -%>
+    export PATH=$(dirname <%= context.custom_path %>):$PATH
+    echo "USING CUSTOM PYTHON"
+<%- else -%>
+    module load <%= python_module %>
+    echo "Loading module"
+<%- end -%>
 
 # List loaded modules
 module list
@@ -164,4 +172,6 @@ fi
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
+echo "PATH IS: $PATH"
+echo "PYTHON FROM $(which python)" 
 python -m jupyter $jp_type --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
