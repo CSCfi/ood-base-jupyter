@@ -1,18 +1,11 @@
 stages:          # List of stages for jobs, and their order of execution
-  - build-rpm
-  - upload-rpm
+  - create-rpm
 
-build-job:       # This job runs in the build stage, which runs first.
+create-rpm-job:       # This job runs in the build stage, which runs first.
   stage: build-rpm
   tags:
     - ood
   script:
     - git-build-rpm
+    - env | grep OOD_
     - echo "RPM build done."
-
-upload-job:   # This job runs in the test stage.
-  stage: upload-rpm    # It only starts when the job in the build stage completes successfully.
-  tags:
-    - ood
-  script:
-    - cp *.rpm $HOME
