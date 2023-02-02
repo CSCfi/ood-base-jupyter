@@ -7,6 +7,6 @@ create-rpm-job:       # This job runs in the build stage, which runs first.
     - ood
   script:
     - git-build-rpm
-    - rpmsign --addsign *.rpm
+    - rpmsign --addsign -D "%_gpg_name Compen CI" -D "%_gpg_sign_cmd_extra_args --pinentry-mode loopback --passphrase $OOD_CI_SIGN_PASS" *.rpm
     - for f in $(ls *.rpm); do curl --cacert $HOME/certs/ca.crt --cert $HOME/certs/client.crt --key $HOME/certs/client.key --request PUT --url https://ood-repo.rahtiapp.fi/add_rpm --form "rpm=@$f"; done 
     - echo "RPM build done."
