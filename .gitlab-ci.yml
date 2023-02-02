@@ -7,5 +7,6 @@ create-rpm-job:       # This job runs in the build stage, which runs first.
     - ood
   script:
     - git-build-rpm
-    - env | grep OOD_
+    - rpmsign --addsign *.rpm
+    - cp *.rpm $HOME/RPMS
     - echo "RPM build done."
