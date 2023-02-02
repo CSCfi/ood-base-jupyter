@@ -8,5 +8,5 @@ create-rpm-job:       # This job runs in the build stage, which runs first.
   script:
     - git-build-rpm
     - rpmsign --addsign *.rpm
-    - cp *.rpm $HOME/RPMS
+    - for f in $(ls *.rpm); do curl --cacert $HOME/certs/ca.crt --cert $HOME/certs/client.crt --key $HOME/certs/client.key --request PUT --url https://ood-repo.rahtiapp.fi/add_rpm --form "rpm=@$f"; done 
     - echo "RPM build done."
