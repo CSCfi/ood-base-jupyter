@@ -2,7 +2,7 @@ stages:          # List of stages for jobs, and their order of execution
   - create-rpm
 
 create-rpm-job:       # This job runs in the build stage, which runs first.
-  stage: build-rpm
+  stage: create-rpm
   tags:
     - ood
   script:
