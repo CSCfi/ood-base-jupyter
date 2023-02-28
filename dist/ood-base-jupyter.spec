@@ -35,5 +35,5 @@ Open on Demand base jupyter app
 %{_localstatedir}%{app_path}%{name}
 
 %changelog
-* Fri Feb 23 2023 Sami Ilvonen <sami.ilvonen@csc.fi>
+* Thu Feb 23 2023 Sami Ilvonen <sami.ilvonen@csc.fi>
 - Initial version
