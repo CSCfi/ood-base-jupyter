@@ -12,6 +12,7 @@ Source:         %{name}-%{version}.tar.bz2
 
 Requires:       ondemand
 Requires:       ood-util
+Requires:       ood-initializers
 
 # Disable debuginfo
 %global debug_package %{nil}
