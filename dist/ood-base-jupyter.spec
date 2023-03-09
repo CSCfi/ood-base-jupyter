@@ -31,6 +31,10 @@ Open on Demand base jupyter app
 %__install -m 0644 -D template/* %{buildroot}%{_localstatedir}%{app_path}%{name}/template
 %__install -m 0644 manifest.yml *.js *.erb icon.png README.md LICENSE.txt %{buildroot}%{_localstatedir}%{app_path}%{name}/
 
+%post
+# TODO: include form_validated.js globally to avoid this?
+%__cat "$(rpm -qil ood-util | grep form_validated.js)" >> %{_localstatedir}%{app_path}%{name}/form.js
+
 %files
 
 %{_localstatedir}%{app_path}%{name}
