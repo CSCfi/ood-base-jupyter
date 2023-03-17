@@ -1,6 +1,8 @@
 # Job submission configuration file
 #
 ---
+cluster: "<%= OODClusters.first.id -%>"
+
 <% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
 <% gres = [] %>
 <% gres.push("nvme:#{csc_nvme}") if csc_nvme.to_i > 0 %>
