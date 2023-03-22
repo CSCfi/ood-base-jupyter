@@ -6,7 +6,7 @@ cluster: "<%= OODClusters.first.id -%>"
 <% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
 <% gres = [] %>
 <% gres.push("nvme:#{csc_nvme}") if csc_nvme.to_i > 0 %>
-<% gres.push("gpu:v100:#{n_gpus}") if n_gpus > 0 %>
+<% gres.push("gpu:a100:#{n_gpus}") if n_gpus > 0 %>
 #
 # Configure the content of the job script for the batch job here
 # @see http://www.rubydoc.info/gems/ood_core/OodCore/BatchConnect/Template
