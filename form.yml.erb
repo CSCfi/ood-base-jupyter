@@ -34,23 +34,13 @@ attributes:
     value: "interactive"
     select:
       - "interactive"
-      - "small"
-      - "gpu"
-      - "gputest"
       - "test"
-      - "fmi"
-      - "fmitest"
     help: |
       Selecting a gpu partition will reserve 1 GPU (A100)
   csc_slurm_reservation:
     partitions:
       - "interactive"
-      - "small"
-      - "gpu"
-      - "gputest"
       - "test"
-      - "fmi"
-      - "fmitest"
   csc_slurm_limits:
     data:
       limits:
