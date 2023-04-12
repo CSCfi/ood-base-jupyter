@@ -1,7 +1,7 @@
 # Job submission configuration file
 #
 ---
-cluster: "<%= OODClusters.first.id -%>"
+cluster: "<%= ENV["CSC_CLUSTER"] -%>"
 
 <% max_mem_per_cpu = SlurmLimits.limits.fetch(csc_slurm_partition, {}).fetch(:max_mem_per_cpu, 0).to_f %>
 <% mem = (max_mem_per_cpu * 1024 * csc_cores.to_i).to_i %>
