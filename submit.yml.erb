@@ -1,6 +1,11 @@
 # Job submission configuration file
 #
 ---
+cluster: "<%= ENV["CSC_CLUSTER"] -%>"
+
+<% max_mem_per_cpu = SlurmLimits.limits.fetch(csc_slurm_partition, {}).fetch(:max_mem_per_cpu, 0).to_f %>
+<% mem = (max_mem_per_cpu * 1024 * csc_cores.to_i).to_i %>
+
 <% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
 <% gres = [] %>
 <% gres.push("nvme:#{csc_nvme}") if csc_nvme.to_i > 0 %>
@@ -24,7 +29,11 @@ script:
       - '<%= csc_cores  %>'
       - '-t'
       - '<%= csc_time %>'
-      - '--mem=<%= csc_memory %>G'
+      <% if max_mem_per_cpu > 0 %>
+      - '--mem=<%= mem -%>M'
+      <% else %>
+      - '--mem=<%= csc_memory -%>G'
+      <% end %>
       <% unless gres.empty? %>
       - '--gres=<%= gres.join(",") -%>'
       <% end %>
