@@ -175,3 +175,15 @@ set -x
 echo "PATH IS: $PATH"
 echo "PYTHON FROM $(which python)" 
 python -m jupyter $jp_type --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
+
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+  echo "python exited with status $exit_code"
+  if (tail -20 "<%= session.staged_root.join("output.log") %>" | grep -q JSONDecodeError) ; then
+    if [ "$(find $HOME/.jupyter -type f -empty -iname '*.json' | wc -l)" -gt 0 ]; then
+      echo "Could not launch Jupyter. Please back up and delete $HOME/.jupyter and try again." | tee "<%= session.staged_root.join("job_exit_reason") -%>"
+      scancel "$SLURM_JOB_ID"
+      exit $exit_code
+    fi
+  fi
+fi
