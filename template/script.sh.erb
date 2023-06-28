@@ -110,7 +110,7 @@ module list
     fi
 
     # Install jupyterlab if there is no jupyter installed (system python only)
-    <% if context.python_user_site == "0" -%>
+    <% if context.user_packages == "0" -%>
     export PYTHONNOUSERSITE="TRUE"
     <% end -%>
     if [[ ! $(command -v jupyter) ]]; then
