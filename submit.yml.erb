@@ -6,18 +6,16 @@ cluster: "<%= ENV["CSC_CLUSTER"] -%>"
 <% max_mem_per_cpu = SlurmLimits.limits.fetch(csc_slurm_partition, {}).fetch(:max_mem_per_cpu, 0).to_f %>
 <% mem = (max_mem_per_cpu * 1024 * csc_cores.to_i).to_i %>
 
-<% n_gpus = csc_slurm_partition == "gpu" || csc_slurm_partition == "gputest"  ? 1 : 0 %>
+<% n_gpus = 1 %>
+<% gpu_type = SlurmLimits.limits&.fetch(csc_slurm_partition, nil)&.fetch(:gpu_types)&.first %>
 <% gres = [] %>
 <% gres.push("nvme:#{csc_nvme}") if csc_nvme.to_i > 0 %>
-<% gres.push("gpu:v100:#{n_gpus}") if n_gpus > 0 %>
+<% gres.push("gpu:#{gpu_type}:#{n_gpus}") if gpu_type %>
 #
 # Configure the content of the job script for the batch job here
 # @see http://www.rubydoc.info/gems/ood_core/OodCore/BatchConnect/Template
 #
 batch_connect:
-  # We use the basic web server template for generating the job script
-  #
-  # @note Do not change this unless you know what you are doing!
   template: "basic"
   conn_params:
     - jp_type
@@ -37,20 +35,3 @@ script:
       <% unless gres.empty? %>
       - '--gres=<%= gres.join(",") -%>'
       <% end %>
-  # You can override the command used to query the hostname of the compute node
-  # here
-  #
-  # @note It is **highly** recommended this be set in the global cluster
-  #   configuration file so that all apps can take advantage of it by default
-  #
-  #set_host: "host=$(hostname -A | awk '{print $2}')"
-
-#
-# Configure the job script submission parameters for the batch job here
-# @see http://www.rubydoc.info/gems/ood_core/OodCore/Job/Script
-#
-#script:
-#  queue_name: "queue1"
-#  accounting_id: "account1"
-#  email_on_started: true
-#  native: # ... array of command line arguments ...
