@@ -37,7 +37,7 @@ module list
   fi
 
   # Verify that venv is not in home folder
-  root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
+  root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f4)
   if [[ "$root_dir" != "scratch" && "$root_dir" != "projappl" && "$root_dir" != fmi ]]; then
     echo "Virtual environment needs to be in /scratch/ or /projappl/" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
     scancel "$SLURM_JOB_ID"
