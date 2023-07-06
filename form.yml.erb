@@ -53,8 +53,7 @@ attributes:
       label: Python
       widget: select
       options:
-          - ["Cray-python", "cray-python"]
-          - ["System-python"]
+          - ["Cray-python", "cray-python", data-hide-custom-module: true]
           - ["Custom"]
       wrapper:
         class: "basic"
@@ -71,7 +70,7 @@ attributes:
       label: "Jupyter type"
       options:
         - ["Notebook","notebook"]
-        - ["Lab","lab", data-option-for-python-module-python-data: false]
+        - ["Lab","lab"]
       value: "notebook"
   csc_path:
     submit: notebook_dir
@@ -90,32 +89,34 @@ attributes:
     label: "Virtual environment path"
     value : ""
     wrapper:
-      class: "venv"
+      class: "venv basic"
     help: |
       Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv <path>` if it does not exist. Leave empty to ignore.
   system_site:
       label: "Enable system installed packages on venv creation"
       widget: check_box
       value: "1"
+      data:
+        class: "basic"
   user_packages:
       label: "Enable packages under ~/.local/lib on venv start"
       widget: check_box
       value: "0"
+      data:
+        class: "basic"
   env_script:
       label: "Custom init"
       widget: select
       wrapper:
         class: "advanced"
       options:
-          - ["None", "None" , {data-hide-custom-start: true, data-hide-custom-script: true} 
-            ]
           - ["Text","Text",{  data-hide-custom-script: true}]
           - ["File","File",{data-hide-custom-start: true }]
   custom_start:
       label: "Script to start"
       widget: "text_area"
       value: ""
-      wrapper: 
+      wrapper:
         class: "advanced"
   custom_script:
       label: "Path to script"
@@ -140,14 +141,14 @@ form:
   - csc_nvme
   - csc_time
   - csc_header_settings
-  - python_module
-  - custom_module
   - jp_type
   - csc_path
+  - advanced
+  - python_module
+  - custom_module
   - venv
   - system_site
   - user_packages
-  - advanced
   - env_script
   - custom_start
   - custom_script

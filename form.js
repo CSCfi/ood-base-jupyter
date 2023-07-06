@@ -1,12 +1,11 @@
 (function () {
 
-  // Hide custom python module field when custom is not selected
-  const python_module = $("#batch_connect_session_context_python_module");
-  python_module.change(update_custom_module);
-  update_custom_module();
+  // Checkboxes don't support wrapper in bootstrap_form, use data-class for propagating from form.
+  $('[data-class="basic"').each(function() {
+    $(this).closest(".form-group").addClass("basic");
+  });
 
   const show_advanced = $("#batch_connect_session_context_advanced");
-
   show_advanced.change(update_advanced);
   update_advanced();
   const venv = $("#batch_connect_session_context_venv");
@@ -16,30 +15,16 @@
 
 function update_advanced() {
 
-  const show_advanced = $("#batch_connect_session_context_advanced");
-  
-  const show = show_advanced.prop("checked");
-  update_visibility(".advanced", show);
-  const basic = $("#batch_connect_session_context_basic")
-  update_visibility(".basic", !show);
-  const custom_init = $("#batch_connect_session_context_env_script");
-  custom_init[0].selectedIndex = 0;
-  custom_init[0].dispatchEvent( new Event("change"));
-  const python_module = $("#batch_connect_session_context_python_module");
-  python_module[0].selectedIndex = 0;
-  python_module[0].dispatchEvent( new Event("change"));
-
-}
-
-function update_custom_module() {
-  const python_module = $("#batch_connect_session_context_python_module").val();
-  update_visibility(".custom_module", python_module === "Custom");
+  const show_advanced = $("#batch_connect_session_context_advanced").prop("checked");
+  update_visibility(".advanced", show_advanced);
+  update_visibility(".basic", !show_advanced);
 }
 
 function update_visibility(selector, show) {
   const fields = $(selector);
   fields.each( function () {
-    $(this).toggle(!!show);
+    // Use class d-none to not conflict with OOD_BC_DYNAMIC_JS (which toggles display: none);
+    $(this).toggleClass("d-none", !show);
   });
 
 }
