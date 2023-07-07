@@ -6,157 +6,110 @@ echo "TIMING - Starting main script at: $(date)"
 # Set working directory to home directory
 cd "${HOME}"
 
-#
-# Start Jupyter Notebook Server
-#
-#
-# Purge the module environment to avoid conflicts
-module purge
+<% if context.advanced == "1" %>
+  <% if context.env_script == "Text" %>
+    echo "Running user-provided script"
+    <%= context.custom_start %>
+  <% elsif context.env_script == "File" %>
+    echo "Sourcing <%= context.custom_script %>"
+    source "<%= context.custom_script %>"
+  <% end %>
+<% else %>
 
-<% python_module = "" %>
-<% if context.python_module == "Custom" -%>
-  <% python_module = context.custom_module %>
-<%- else -%>
-  <% python_module = context.python_module %>
-<%- end -%>
+  module purge
 
-module load <%= python_module %>
-
-# List loaded modules
-module list
-
-<% if !context.venv.blank? -%>
-
-  # Check if Python installation is inside Singularity container
-  PY_INT_REF=$(dirname $(python -c 'import sys;print(sys.executable)'))
-  PY_EXT_REF=$(dirname $(which python))
-  if [[ ! $PY_INT_REF == $PY_EXT_REF  ]];then
-    echo "Python installation is in Singularity container"
-    # Need to save this before venv is activated
-    extra_pythonpath=$(python -c 'import site;print(":".join(site.getsitepackages()))')
-  fi
-
-  # Verify that venv is not in home folder
-  root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f4)
-  if [[ "$root_dir" != "scratch" && "$root_dir" != "projappl" && "$root_dir" != fmi ]]; then
-    echo "Virtual environment needs to be in /scratch/ or /projappl/" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
-    scancel "$SLURM_JOB_ID"
-    exit 1
-  fi
-
-  if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
-    echo "Activating venv at <%= context.venv -%>"
-    source "<%= context.venv -%>/bin/activate"
-
-    # Add the container site-packages to python path
-    if [[ ! $PY_INT_REF == $PY_EXT_REF  ]];then
-      SINGULARITYENV_PYTHONPATH="$SINGULARITYENV_PYTHONPATH:$extra_pythonpath"
-    fi
-  else
-    echo "Creating new venv at <%= context.venv %>"
-    # Use python3.9 to create the venv if using system python
-    <% if context.python_module == "Custom" -%>
-      python=$(which python3)
-      if [[ $python == /usr/bin/python3 ]]; then 
-        python=/usr/bin/python3.9; 
+  python="python"
+  <% if context.python_module == "Custom" -%>
+    python_path="<%= context.custom_python_path %>"
+    if [[ -f "$python_path" && -x "$python_path" ]]; then
+    # User provided full path to python executable
+      python="$python_path"
+      export PATH="$(dirname "$python_path"):$PATH"
+    elif [[ -d $python_path && "$(basename "$python_path")" = "bin" ]]; then
+      # User provided a path to a bin directory with a python executable
+      export PATH="$python_path:$PATH"
+      if [[ "$(dirname "$(command -v python)")" = "${python_path%%/}" ]]; then
+        python="$(command -v python)"
+      else
+        # User provided a bin path but no python was found
+        # TODO: allow python3 binary instead of just python?
+        echo "Python not found in provided path"
+        exit 1
       fi
-    <% else -%>
-      python=$(which python)
-    <% end %>
-
-    # --system-site-packages does not work properly with the module system
-    # packages from the module are added if module is loaded when activating venv
-    error_msg=$($python -m venv "<%= context.venv -%>" --system-site-packages 2>&1 > /dev/null)
-    return_code="$?"
-    if [[ ! "$return_code" -eq 0 ]];then
-      echo "Could not create venv: $error_msg" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
-      scancel "$SLURM_JOB_ID"
+    else
+      # User provided something that wasn't either a path to python binary or bin directory
+      # TODO: attempt to load module here?
+      echo "Unknown python path provided"
       exit 1
     fi
+  <%- else -%>
+    module load <%= context.python_module %>
+  <%- end -%>
 
-    echo "Activating created venv at <%= context.venv -%>"
+  # List loaded modules
+  module list
 
-    source "<%= context.venv -%>/bin/activate"
+  <% if !context.venv.blank? -%>
 
-    # Fix python executables for Singularity installations
-    if [[ ! $PY_INT_REF == $PY_EXT_REF ]];then
-      # containers like geoconda, python-data/3.9-1
-      if grep -q "/CSC_SING_INST" "$PY_EXT_REF/python"; then
-        # Replace venv symlink with wrapper script for python
-        cp --remove-destination "$PY_EXT_REF/python" "<%= context.venv -%>/bin/python"
+    if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
+      echo "Activating venv at <%= context.venv -%>"
+      source "<%= context.venv -%>/bin/activate"
+      unset python
+    else
+      echo "Creating new venv at <%= context.venv %>"
 
-        # Fix wrapper script so that DIR is set correctly to find common.sh
-        # Set script to execute the symlink in this venv instead of executing container python
-        sed -i "s@DIR=\"@DIR=${PY_EXT_REF}\n#DIR=@g" "<%= context.venv -%>/bin/python"
-        sed -i "s@${PY_INT_REF}/python@<%= context.venv -%>/bin/python_cont@g" "<%= context.venv -%>/bin/python"
-
-        # Create symlink to container python
-        ln -fs "$PY_INT_REF/python" "<%= context.venv -%>/bin/python_cont"
-      # containers like pytorch, tensorflow
-      elif grep -q 'singularity_wrapper exec $(basename "$0")' "$PY_EXT_REF/python"; then
-        # Replace venv symlink with wrapper script for python
-        cp --remove-destination "$PY_EXT_REF/python" "<%= context.venv -%>/bin/python"
-
-        # Set script to execute the symlink in this venv instead of executing container python
-        sed -i "s@exec \$(basename \"\$0\")@exec <%= context.venv -%>/bin/python_cont@g" "<%= context.venv -%>/bin/python"
-
-        # Create symlink to container python
-        ln -fs "$PY_INT_REF/python" "<%= context.venv -%>/bin/python_cont"
-      else
-        echo "Unknown Python environment container"
+      # --system-site-packages does not work properly with the module system
+      # packages from the module are added if module is loaded when activating venv
+      error_msg=$($python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.system_site == "1" -%> 2>&1 > /dev/null)
+      return_code="$?"
+      if [[ ! "$return_code" -eq 0 ]];then
+        echo "Could not create venv: $error_msg" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
+        scancel "$SLURM_JOB_ID"
+        exit 1
       fi
-      # Add the container site-packages to python path
-      SINGULARITYENV_PYTHONPATH="$SINGULARITYENV_PYTHONPATH:$extra_pythonpath"
+
+      echo "Activating created venv at <%= context.venv -%>"
+
+      source "<%= context.venv -%>/bin/activate"
+      unset python
+
+      # Set PYTHONNOUSERSITE already to avoid accidentally installing into user packages if venv is not writable.
+      <% if context.user_packages == "0" -%>
+      export PYTHONNOUSERSITE="TRUE"
+      <% end -%>
+
+      # Install jupyterlab if there is no jupyter installed (system python only)
+      if [[ ! $(command -v jupyter) ]]; then
+        echo "Installing jupyterlab"
+        python -m pip install jupyterlab
+      fi
+
+      # Install kernel that points to the venv python
+      python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
     fi
 
-    # Install jupyterlab if there is no jupyter installed (system python only)
+    # Set JUPYTER_DATA_DIR to find kernels from this venv
+    export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
     <% if context.user_packages == "0" -%>
-    export PYTHONNOUSERSITE="TRUE"
+      echo "Disabling user packages"
+      export PYTHONNOUSERSITE="TRUE"
+      if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
+        if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
+          echo "Jupyter is installed only in user packages but user packages are disabled"
+        else
+          echo "Jupyter is not installed"
+        fi
+      fi
     <% end -%>
-    if [[ ! $(command -v jupyter) ]]; then
-      echo "Installing jupyterlab"
-      python -m pip install jupyterlab
-    fi
+  <% end -%>
 
-    # Install kernel that points to the venv python
-    python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
-    fi
-
-  # Set JUPYTER_DATA_DIR to find kernels from this venv
-  export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
-<% end -%>
-
-<% if context.user_packages == "0" -%>
-  echo "Disabling user packages"
-  export PYTHONNOUSERSITE="TRUE"
-  # pytorch is known to require enabled user packages to find Jupyter, do a quick test for other modules
-  if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
-    if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
-      echo "Jupyter is installed only in user packages but user packages are disabled"
-      <% if python_module.include?("pytorch") %>
-        echo "Using pytorch module, enabling user packages again"
-        unset PYTHONNOUSERSITE
-      <% end %>
-    fi
-  fi
-<% end -%>
-
-jp_type="lab"
-# Check if JupyterLab version is higher than 3.0.0
-has_jupyterlab=$(python -c 'from packaging import version;import jupyterlab; print(version.parse(jupyterlab.__version__) >= version.parse("3.0.0"))')
-if [[ "$has_jupyterlab" == "True" ]]; then
   # Some modules don't have the extensions enabled, enable them for user
-  python -m jupyter server extension enable --user --py nbclassic
-  python -m jupyter server extension enable --user --py jupyterlab
-else
-  # Fall back to notebook if Jupyter Lab isn't installed or too old version
-  sed -i 's/\.ServerApp\./.NotebookApp./g' $CONFIG_FILE
-  sed -i 's/\.root_dir/.notebook_dir/g' $CONFIG_FILE
-  jp_type="notebook"
-fi
+  ${python:-python} -m jupyter server extension enable --user --py nbclassic
+  ${python:-python} -m jupyter server extension enable --user --py jupyterlab
+<% end %>
 
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
-python -m jupyter $jp_type --config="${CONFIG_FILE}"
+${python:-python} -m jupyter $jp_type --config="${CONFIG_FILE}"

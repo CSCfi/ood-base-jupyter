@@ -53,11 +53,11 @@ attributes:
       label: Python
       widget: select
       options:
-          - ["Cray-python", "cray-python", data-hide-custom-module: true]
+          - ["Cray-python", "cray-python", data-hide-custom-python-path: true]
           - ["Custom"]
       wrapper:
         class: "basic"
-  custom_module:
+  custom_python_path:
     widget: text_field
     label: "Path to python"
     value : ""
@@ -111,19 +111,23 @@ attributes:
         class: "advanced"
       options:
           - ["Text","Text",{  data-hide-custom-script: true}]
-          - ["File","File",{data-hide-custom-start: true }]
+          - ["File","File",{ data-hide-custom-start: true }]
   custom_start:
       label: "Script to start"
       widget: "text_area"
       value: ""
       wrapper:
         class: "advanced"
+      help: |
+        The bash script provided in the text box will be run before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
   custom_script:
       label: "Path to script"
       widget: "text_field"
       value: ""
       wrapper:
          class: "advanced"
+      help: |
+        The script on the path provided will be sourced by bash before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
   csc_extra_desc:
@@ -145,7 +149,7 @@ form:
   - csc_path
   - advanced
   - python_module
-  - custom_module
+  - custom_python_path
   - venv
   - system_site
   - user_packages
