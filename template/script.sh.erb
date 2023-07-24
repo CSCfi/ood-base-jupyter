@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Prints $1 in log and app info card before cancelling slurm job and exiting with exit code $2.
+exit_verbose() {
+  echo "$1" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
+  scancel "$SLURM_JOB_ID"
+  exit "${2:-0}"
+}
+
 # Benchmark info
 echo "TIMING - Starting main script at: $(date)"
 
@@ -33,14 +40,12 @@ cd "${HOME}"
       else
         # User provided a bin path but no python was found
         # TODO: allow python3 binary instead of just python?
-        echo "Python not found in provided path"
-        exit 1
+        exit_verbose "Python not found in provided path" 1
       fi
     else
       # User provided something that wasn't either a path to python binary or bin directory
       # TODO: attempt to load module here?
-      echo "Unknown python path provided"
-      exit 1
+      exit_verbose "Unknown python path provided" 1
     fi
   <%- else -%>
     module load <%= context.python_module %>
@@ -63,9 +68,7 @@ cd "${HOME}"
       error_msg=$($python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.system_site == "1" -%> 2>&1 > /dev/null)
       return_code="$?"
       if [[ ! "$return_code" -eq 0 ]];then
-        echo "Could not create venv: $error_msg" | tee "<%= session.staged_root.join("job_exit_reason") -%>"
-        scancel "$SLURM_JOB_ID"
-        exit 1
+        exit_verbose "Could not create venv: $error_msg" 1
       fi
 
       echo "Activating created venv at <%= context.venv -%>"
