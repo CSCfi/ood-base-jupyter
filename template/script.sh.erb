@@ -54,26 +54,27 @@ cd "${HOME}"
   # List loaded modules
   module list
 
-  <% if !context.venv.blank? -%>
-
-    if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
-      echo "Activating venv at <%= context.venv -%>"
-      source "<%= context.venv -%>/bin/activate"
+  venv="<%= context.venv -%>"
+  venv="${venv%/bin/activate}"
+  if [ ! -z "$venv" ]; then
+    if [[ -f "$venv/bin/activate" ]]; then
+      echo "Activating venv at $venv"
+      source "$venv/bin/activate"
       unset python
     else
-      echo "Creating new venv at <%= context.venv %>"
+      echo "Creating new venv at $venv"
 
       # --system-site-packages does not work properly with the module system
       # packages from the module are added if module is loaded when activating venv
-      error_msg=$($python -m venv "<%= context.venv -%>" <%= "--system-site-packages" if context.system_site == "1" -%> 2>&1 > /dev/null)
+      error_msg=$($python -m venv "$venv" <%= "--system-site-packages" if context.system_site == "1" -%> 2>&1 > /dev/null)
       return_code="$?"
       if [[ ! "$return_code" -eq 0 ]];then
         exit_verbose "Could not create venv: $error_msg" 1
       fi
 
-      echo "Activating created venv at <%= context.venv -%>"
+      echo "Activating created venv at $venv"
 
-      source "<%= context.venv -%>/bin/activate"
+      source "$venv/bin/activate"
       unset python
 
       # Set PYTHONNOUSERSITE already to avoid accidentally installing into user packages if venv is not writable.
@@ -88,11 +89,11 @@ cd "${HOME}"
       fi
 
       # Install kernel that points to the venv python
-      python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
+      python -m ipykernel install --prefix="$venv" --name="python3" --display-name="Python 3"
     fi
 
     # Set JUPYTER_DATA_DIR to find kernels from this venv
-    export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
+    export JUPYTER_DATA_DIR="$venv/share/jupyter"
     <% if context.user_packages == "0" -%>
       echo "Disabling user packages"
       export PYTHONNOUSERSITE="TRUE"
@@ -104,7 +105,7 @@ cd "${HOME}"
         fi
       fi
     <% end -%>
-  <% end -%>
+  fi
 
   # Some modules don't have the extensions enabled, enable them for user
   ${python:-python} -m jupyter server extension enable --user --py nbclassic
