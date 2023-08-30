@@ -25,6 +25,8 @@ cd "${HOME}"
 # Probably not safe on lumi
 #  module purge
 
+echo "Using python from"
+  which python
   python="python"
   <% if context.python_module == "Custom" -%>
     python_path="<%= context.custom_python_path %>"
