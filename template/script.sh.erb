@@ -22,8 +22,8 @@ cd "${HOME}"
     source "<%= context.custom_script %>"
   <% end %>
 <% else %>
-
-  module purge
+# Probably not safe on lumi
+#  module purge
 
   python="python"
   <% if context.python_module == "Custom" -%>
