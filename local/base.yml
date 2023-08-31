@@ -1,0 +1,4 @@
+title: "Jupyter"
+
+attributes:
+  csc_reset_cache: "sys/ood-base-jupyter/pytorch"

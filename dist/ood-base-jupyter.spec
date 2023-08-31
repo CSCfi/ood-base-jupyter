@@ -27,8 +27,9 @@ Open on Demand base jupyter app
 
 %install
 
-%__install -m 0755 -d %{buildroot}%{_localstatedir}%{app_path}%{name}/template
+%__install -m 0755 -d %{buildroot}%{_localstatedir}%{app_path}%{name}/{local,template}
 %__install -m 0755 -D template/* %{buildroot}%{_localstatedir}%{app_path}%{name}/template
+%__install -m 0755 -D local/*.yml %{buildroot}%{_localstatedir}%{app_path}%{name}/local
 %__install -m 0644 manifest.yml *.js *.erb icon.png README.md LICENSE.txt %{buildroot}%{_localstatedir}%{app_path}%{name}/
 echo %{version}-%{release} > %{buildroot}%{_localstatedir}%{app_path}%{name}/VERSION
 
