@@ -1,23 +1,51 @@
 (function () {
-
-  // Checkboxes don't support wrapper in bootstrap_form, use data-class for propagating from form.
-  $('[data-class="basic"').each(function() {
-    $(this).closest(".form-group").addClass("basic");
-  });
+  create_tabs();
 
   const show_advanced = $("#batch_connect_session_context_advanced");
   show_advanced.change(update_advanced);
   update_advanced();
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
-
 })();
 
 function update_advanced() {
-
   const show_advanced = $("#batch_connect_session_context_advanced").prop("checked");
+
+  $("#basic_tab_link").toggleClass("active", !show_advanced);
+  $("#advanced_tab_link").toggleClass("active", show_advanced);
+
   update_visibility(".advanced", show_advanced);
   update_visibility(".basic", !show_advanced);
+}
+
+function create_tabs() {
+  const advanced_checkbox = $("#batch_connect_session_context_advanced");
+
+  // Create basic tab with all .basic form elements and button for it.
+  const basic_form_groups = $(".basic").closest(".form-group");
+  const basic_tab = $("<div></div>", { "class": "basic" });
+  const basic_option = $("<li></li>", { "class": "nav-item" });
+  const basic_link = $("<a></a>", { "id": "basic_tab_link", "class": "nav-link" })
+    .text("Basic")
+    .on("click", () => advanced_checkbox.prop("checked", false).change());
+  basic_option.append(basic_link);
+  basic_tab.append(basic_form_groups);
+
+  // Create advanced tab with all .advanced form elements and button for it.
+  const advanced_form_groups = $(".advanced").closest(".form-group");
+  const advanced_tab = $("<div></div>", { "class": "advanced" });
+  const advanced_option = $("<li></li>", { "class": "nav-item" });
+  const advanced_link = $("<a></a>", { "id": "advanced_tab_link", "class": "nav-link" })
+    .text("Advanced")
+    .on("click", () => advanced_checkbox.prop("checked", true).change());
+  advanced_option.append(advanced_link);
+  advanced_tab.append(advanced_form_groups);
+
+  // Create add the buttons for switching tab where the advanced checkbox is.
+  const nav_pills = $("<ul></ul>", {"class": "nav nav-pills mb-3 user-select-none", "css": {"width": "fit-content"}});
+  nav_pills.append(basic_option);
+  nav_pills.append(advanced_option);
+  advanced_checkbox.closest(".form-group").after(nav_pills, basic_tab, advanced_tab);
 }
 
 function update_visibility(selector, show) {

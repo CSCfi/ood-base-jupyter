@@ -85,6 +85,8 @@ attributes:
     label: "Show advanced settings"
     widget: check_box
     value: "0"
+    hidden: true
+    skip_label: true
   venv:
     widget: text_field
     label: "Virtual environment path"
@@ -97,14 +99,12 @@ attributes:
       label: "Enable system installed packages on venv creation"
       widget: check_box
       value: "1"
-      data:
-        class: "basic"
+      wrapper_class: "basic"
   user_packages:
       label: "Enable packages under ~/.local/lib on venv start"
       widget: check_box
       value: "0"
-      data:
-        class: "basic"
+      wrapper_class: "basic"
   env_script:
       label: "Custom init"
       widget: select
