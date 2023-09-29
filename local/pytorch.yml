@@ -1,5 +1,0 @@
-title: "Jupyter: PyTorch"
-
-attributes:
-  python_module: "pytorch"
-  csc_reset_cache: "sys/ood-base-jupyter/pytorch"
