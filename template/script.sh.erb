@@ -50,12 +50,16 @@ which python
       exit_verbose "Unknown python path provided" 1
     fi
   <%- else -%>
+    <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/   -%>
+      ml use /appl/local/csc/modulefiles/
+    <%- end -%>
     module load <%= context.python_module %>
       # If there is no venv set and cray python selected add a minimal set of packages
       # containing the notebook software. 
-      <% if context.python_module == "cray-python/3.9.13.1" -%>
+      <% if context.python_module =~ /cray-python/ -%>
         <% if context.venv == "" -%>
-          PYTHONPATH=$PYTHONPATH:/appl/local/ood/test/soft/base_py/05_10_2023/
+          export PYTHONPATH=$PYTHONPATH:/appl/local/ood/test/soft/base_py/05_10_2023/
+          export PATH=$PATH:/appl/local/ood/test/soft/base_py/05_10_2023/bin/
         <%- end -%>
       <%- end -%>
   <%- end -%>
