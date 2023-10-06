@@ -51,6 +51,13 @@ which python
     fi
   <%- else -%>
     module load <%= context.python_module %>
+      # If there is no venv set and cray python selected add a minimal set of packages
+      # containing the notebook software. 
+      <% if context.python_module == "cray-python/3.9.13.1" -%>
+        <% if context.venv == "" -%>
+          PYTHONPATH=$PYTHONPATH:/appl/local/ood/test/soft/base_py/05_10_2023/
+        <%- end -%>
+      <%- end -%>
   <%- end -%>
 
   # List loaded modules
