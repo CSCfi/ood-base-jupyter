@@ -87,7 +87,7 @@ which python
       # Install jupyterlab if there is no jupyter installed (system python only)
       if [[ ! $(command -v jupyter) ]]; then
         echo "Installing jupyterlab"
-        python -m pip install jupyterlab
+        python -m pip install jupyterlab nbclassic
       fi
 
       # Install kernel that points to the venv python
