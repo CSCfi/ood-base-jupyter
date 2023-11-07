@@ -58,9 +58,10 @@ which python
       # containing the notebook software. 
       <% if context.python_module =~ /cray-python/ -%>
         <% if context.venv == "" -%>
-          export PYTHONPATH=$PYTHONPATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/05_10_2023/
-          export PATH=$PATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/05_10_2023/bin/
-          export JUPYTERLAB_DIR=/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/05_10_2023/share/jupyter/lab/
+          _PY_VER="<%= context.python_module.split('/',2)[1].split('.',3).slice(0,2).join('.') -%>"
+          export PYTHONPATH=$PYTHONPATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/
+          export PATH=$PATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/bin/
+          export JUPYTERLAB_DIR=/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/share/jupyter/lab/
         <%- end -%>
       <%- end -%>
   <%- end -%>
