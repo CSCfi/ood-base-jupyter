@@ -35,3 +35,4 @@ script:
       <% unless gres.empty? %>
       - '--gres=<%= gres.join(",") -%>'
       <% end %>
+      - '--partition=<%= SlurmReservation.partition_to_use(csc_slurm_reservation, csc_slurm_partition) %>'
