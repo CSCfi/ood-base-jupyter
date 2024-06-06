@@ -35,15 +35,6 @@ module list
 
 <% if context.enable_venv == "1" && !context.venv.blank? -%>
 
-  # Check if Python installation is inside Singularity container
-  PY_INT_REF=$(dirname $(python -c 'import sys;print(sys.executable)'))
-  PY_EXT_REF=$(dirname $(which python))
-  if [[ ! $PY_INT_REF == $PY_EXT_REF  ]];then
-    echo "Python installation is in Singularity container"
-    # Need to save this before venv is activated
-    extra_pythonpath=$(python -c 'import site;print(":".join(site.getsitepackages()))')
-  fi
-
   # Verify that venv is not in home folder
   root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
   if [[ "$root_dir" != "scratch" && "$root_dir" != "projappl" && "$root_dir" != fmi ]]; then
@@ -55,11 +46,6 @@ module list
   if [[ -f "<%= context.venv -%>/bin/activate" ]]; then
     echo "Activating venv at <%= context.venv -%>"
     source "<%= context.venv -%>/bin/activate"
-
-    # Add the container site-packages to python path
-    if [[ ! $PY_INT_REF == $PY_EXT_REF  ]];then
-      SINGULARITYENV_PYTHONPATH="$SINGULARITYENV_PYTHONPATH:$extra_pythonpath"
-    fi
   else
     echo "Creating new venv at <%= context.venv %>"
     # Use python3.9 to create the venv if using system python
@@ -86,37 +72,6 @@ module list
 
     source "<%= context.venv -%>/bin/activate"
 
-    # Fix python executables for Singularity installations
-    if [[ ! $PY_INT_REF == $PY_EXT_REF ]];then
-      # containers like geoconda, python-data/3.9-1
-      if grep -q "/CSC_SING_INST" "$PY_EXT_REF/python"; then
-        # Replace venv symlink with wrapper script for python
-        cp --remove-destination "$PY_EXT_REF/python" "<%= context.venv -%>/bin/python"
-
-        # Fix wrapper script so that DIR is set correctly to find common.sh
-        # Set script to execute the symlink in this venv instead of executing container python
-        sed -i "s@DIR=\"@DIR=${PY_EXT_REF}\n#DIR=@g" "<%= context.venv -%>/bin/python"
-        sed -i "s@${PY_INT_REF}/python@<%= context.venv -%>/bin/python_cont@g" "<%= context.venv -%>/bin/python"
-
-        # Create symlink to container python
-        ln -fs "$PY_INT_REF/python" "<%= context.venv -%>/bin/python_cont"
-      # containers like pytorch, tensorflow
-      elif grep -q 'singularity_wrapper exec $(basename "$0")' "$PY_EXT_REF/python"; then
-        # Replace venv symlink with wrapper script for python
-        cp --remove-destination "$PY_EXT_REF/python" "<%= context.venv -%>/bin/python"
-
-        # Set script to execute the symlink in this venv instead of executing container python
-        sed -i "s@exec \$(basename \"\$0\")@exec <%= context.venv -%>/bin/python_cont@g" "<%= context.venv -%>/bin/python"
-
-        # Create symlink to container python
-        ln -fs "$PY_INT_REF/python" "<%= context.venv -%>/bin/python_cont"
-      else
-        echo "Unknown Python environment container"
-      fi
-      # Add the container site-packages to python path
-      SINGULARITYENV_PYTHONPATH="$SINGULARITYENV_PYTHONPATH:$extra_pythonpath"
-    fi
-
     # Install jupyterlab if there is no jupyter installed (system python only)
     <% if context.python_user_site == "0" -%>
     export PYTHONNOUSERSITE="TRUE"
@@ -141,10 +96,6 @@ module list
   if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
     if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
       echo "Jupyter is installed only in user packages but user packages are disabled"
-      <% if python_module.include?("pytorch") %>
-        echo "Using pytorch module, enabling user packages again"
-        unset PYTHONNOUSERSITE
-      <% end %>
     fi
   fi
 <% elsif !context.python_user_base.blank? -%>
