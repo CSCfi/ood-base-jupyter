@@ -81,9 +81,10 @@ module list
       python -m pip install jupyterlab
     fi
 
-    # Install kernel that points to the venv python
-    python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3"
     fi
+
+  # Install kernel that points to the venv python
+  python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3 (venv)"
 
   # Set JUPYTER_DATA_DIR to find kernels from this venv
   export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
