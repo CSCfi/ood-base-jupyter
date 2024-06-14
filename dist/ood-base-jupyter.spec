@@ -2,7 +2,7 @@
 
 Name:           ood-base-jupyter
 Version:        7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Open on Demand base jupyter app
 
 BuildArch:      noarch
