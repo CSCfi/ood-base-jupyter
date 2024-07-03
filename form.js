@@ -5,25 +5,16 @@
   python_module.change(update_custom);
   update_custom();
 
-  // Checkboxes dont support setting wrapper class
-  const user_sites_checkbox = $("#batch_connect_session_context_python_user_site");
-  user_sites_checkbox.parent().parent().addClass("advanced");
-
-  const venv_checkbox = $("#batch_connect_session_context_enable_venv");
-  venv_checkbox.parent().parent().addClass("advanced");
+  setup_extra_packages_field();
 
   const show_advanced = $("#batch_connect_session_context_advanced");
 
   show_advanced.change(update_advanced);
-  venv_checkbox.change(update_advanced);
-  user_sites_checkbox.change(update_advanced);
   update_advanced();
 
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
-  venv_checkbox.change(validate_venv);
-
-  setup_extra_packages_field();
+  $("#batch_connect_session_context_extra_packages_venv").change(validate_venv);
 })();
 
 function setup_extra_packages_field() {
@@ -33,7 +24,8 @@ function setup_extra_packages_field() {
   const divs = inputs.parent();
   // Style radio buttons into nav-pills style
   label.css("flex", "0 0 100%");
-  form_group.addClass("nav-pills user-select-none advanced").css("display", "flex").css("flex-wrap", "wrap");
+  form_group.addClass("nav-pills user-select-none").css("display", "flex").css("flex-wrap", "wrap");
+  form_group.parent().addClass("advanced");
   inputs.css("opacity", "0");
   divs.removeClass("form-check").addClass("nav-link");
 
@@ -42,8 +34,8 @@ function setup_extra_packages_field() {
     const all = input.closest(".form-group");
     all.find(".active").removeClass("active");
     input.parent().addClass("active");
-    update_visibility(".venv", this.value === "venv")
-    update_visibility(".user_packages_field", this.value === "user_packages")
+    $(".venv").toggleClass("d-none", !(this.value === "venv"));
+    $(".user_packages_field").toggleClass("d-none", !(this.value === "user_packages"));
   });
 
   form_group.find("input:checked").trigger("change");
@@ -55,13 +47,6 @@ function update_advanced() {
   const show = show_advanced.prop("checked");
 
   update_visibility(".advanced", show);
-
-  const venv = $("#batch_connect_session_context_enable_venv").prop("checked");
-  update_visibility(".venv", show && venv);
-
-  const user_packages_enabled = $("#batch_connect_session_context_python_user_site").prop("checked");
-  update_visibility(".user_packages_field", show && user_packages_enabled);
-
 }
 
 function update_custom(){
@@ -87,7 +72,7 @@ function update_visibility(selector, show) {
 
 function validate_venv() {
   const venv = $("#batch_connect_session_context_venv");
-  const venv_enabled = $("#batch_connect_session_context_enable_venv").prop("checked");
+  const venv_enabled = $('input[name="batch_connect_session_context[extra_packages]"]:checked').val() == "venv";
   if (!venv_enabled) {
     venv[0].setCustomValidity("");
     venv[0].reportValidity();
