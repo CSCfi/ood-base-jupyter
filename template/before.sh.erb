@@ -44,7 +44,7 @@ PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print
 export CONFIG_FILE="${PWD}/config.py"
 
 # Export jp_type for view.html.erb
-export jp_type="<%= context.jp_type -%>"
+export jp_type="<%= context.advanced ? context.jp_type  : "lab" -%>"
 
 # Generate Jupyter configuration file with secure file permissions
 (
