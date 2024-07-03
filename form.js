@@ -93,6 +93,10 @@ function validate_venv() {
 }
 
 function check_venv(venv, callback_valid, callback_invalid) {
+  if (!venv.length) {
+    callback_valid();
+    return;
+  }
   const basePath = "/pun/sys/dashboard/files/fs";
   const file = (`${basePath}${venv}/bin/activate`);
   $.get(file)
