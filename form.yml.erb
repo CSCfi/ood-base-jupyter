@@ -37,19 +37,49 @@ attributes:
       - "gpusmall"
   csc_time:
     max-gpusmall: "8:00:00"
-  csc_module:
-      submit: python_module
+  python_module:
+      widget: select
       label: Python
       options:
-        - spider: "python-data"
-        - spider: "geoconda"
-        - spider: "pytorch"
-        - spider: "tensorflow"
-        - ["Custom module", "Custom"]
-        - ["Custom path", "CustomPath"]
+        - "python-data"
+        - "geoconda"
+        - "pytorch"
+        - "tensorflow"
+        - ["Custom module", "Custom", data-hide-full-module: true]
+        - ["Custom path", "CustomPath", data-hide-full-module: true]
       help: |
         Select the Python module to use. If you need a non-default version of a module, or a not listed module, you can use the *Custom module* option.
         For Python environments created using [Tykky](https://docs.csc.fi/computing/containers/tykky/), use the *Custom path* option.
+  csc_module:
+    submit: full_module
+    label: "Module version"
+    options:
+      - spider:
+          name: "python-data"
+          data:
+            - data-option-for-python-module-geoconda: false
+            - data-option-for-python-module-pytorch: false
+            - data-option-for-python-module-tensorflow: false
+      - spider:
+          name: "geoconda"
+          data:
+            - data-option-for-python-module-python-data: false
+            - data-option-for-python-module-pytorch: false
+            - data-option-for-python-module-tensorflow: false
+      - spider:
+          name: "pytorch"
+          data:
+            - data-option-for-python-module-python-data: false
+            - data-option-for-python-module-geoconda: false
+            - data-option-for-python-module-tensorflow: false
+      - spider:
+          name: "tensorflow"
+          data:
+            - data-option-for-python-module-python-data: false
+            - data-option-for-python-module-geoconda: false
+            - data-option-for-python-module-pytorch: false
+    help: |
+      Specify the version of the module you would like to use.
   custom_path:
     label: "Custom Python interpreter"
     widget: text_field
@@ -133,6 +163,7 @@ form:
   - csc_nvme
   - csc_time
   - csc_header_settings
+  - python_module
   - csc_module
   - custom_module
   - custom_path

@@ -17,7 +17,7 @@ module purge
 <% if context.python_module == "Custom" -%>
   <% python_module = context.custom_module %>
 <%- else -%>
-  <% python_module = context.python_module %>
+  <% python_module = context.full_module %>
 <%- end -%>
 
 
