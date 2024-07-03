@@ -22,7 +22,32 @@
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
   venv_checkbox.change(validate_venv);
+
+  setup_extra_packages_field();
 })();
+
+function setup_extra_packages_field() {
+  const label = $('label[for="batch_connect_session_context_extra_packages"]');
+  const form_group = label.parent();
+  const inputs = form_group.find("input[type=radio]");
+  const divs = inputs.parent();
+  // Style radio buttons into nav-pills style
+  label.css("flex", "0 0 100%");
+  form_group.addClass("nav-pills user-select-none advanced").css("display", "flex").css("flex-wrap", "wrap");
+  inputs.css("opacity", "0");
+  divs.removeClass("form-check").addClass("nav-link");
+
+  inputs.change(function() {
+    const input = $(this);
+    const all = input.closest(".form-group");
+    all.find(".active").removeClass("active");
+    input.parent().addClass("active");
+    update_visibility(".venv", this.value === "venv")
+    update_visibility(".user_packages_field", this.value === "user_packages")
+  });
+
+  form_group.find("input:checked").trigger("change");
+}
 
 function update_advanced() {
   const show_advanced = $("#batch_connect_session_context_advanced");

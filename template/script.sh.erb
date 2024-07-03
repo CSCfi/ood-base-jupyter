@@ -33,7 +33,7 @@ module purge
 # List loaded modules
 module list
 
-<% if context.enable_venv == "1" && !context.venv.blank? -%>
+<% if context.extra_packages == "venv" && !context.venv.blank? -%>
 
   # Verify that venv is not in home folder
   root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
@@ -73,7 +73,7 @@ module list
     source "<%= context.venv -%>/bin/activate"
 
     # Install jupyterlab if there is no jupyter installed (system python only)
-    <% if context.python_user_site == "0" -%>
+    <% if context.extra_packages == "user_packages" -%>
     export PYTHONNOUSERSITE="TRUE"
     <% end -%>
     if [[ ! $(command -v jupyter) ]]; then
@@ -90,7 +90,7 @@ module list
   export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
 <% end -%>
 
-<% if context.python_user_site == "0" -%>
+<% if context.extra_packages != "user_packages" -%>
   echo "Disabling user packages"
   export PYTHONNOUSERSITE="TRUE"
   # pytorch is known to require enabled user packages to find Jupyter, do a quick test for other modules
@@ -126,7 +126,7 @@ echo "TIMING - Starting jupyter at: $(date)"
 set -x
 echo "PATH IS: $PATH"
 echo "PYTHON FROM $(which python)" 
-python -m jupyter $jp_type --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
+python -m jupyter $jp_type --config="${CONFIG_FILE}"
 
 exit_code=$?
 if [ $exit_code -ne 0 ]; then

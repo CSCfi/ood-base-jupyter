@@ -37,16 +37,19 @@ attributes:
       - "gpusmall"
   csc_time:
     max-gpusmall: "8:00:00"
-  python_module:
+  csc_module:
+      submit: python_module
       label: Python
-      widget: select
       options:
-          - ["python-data"]
-          - ["geoconda"]
-          - ["pytorch"]
-          - ["tensorflow"]
-          - ["Custom module","Custom"]
-          - ["Custom path","CustomPath"]
+        - spider: "python-data"
+        - spider: "geoconda"
+        - spider: "pytorch"
+        - spider: "tensorflow"
+        - ["Custom module", "Custom"]
+        - ["Custom path", "CustomPath"]
+      help: |
+        Select the Python module to use. If you need a non-default version of a module, or a not listed module, you can use the *Custom module* option.
+        For Python environments created using [Tykky](https://docs.csc.fi/computing/containers/tykky/), use the *Custom path* option.
   custom_path:
     label: "Custom Python interpreter"
     widget: text_field
@@ -54,8 +57,8 @@ attributes:
     wrapper:
       class: "custom_path"
     help: |
-      Specify absolute path to python interpreter. 
-      E.g `/scratch/project_12345/myInstall/bin/python`
+      Specify the absolute path to the Python interpreter.
+      E.g `/scratch/project_12345/myInstall/bin/python`.
   custom_module:
     widget: text_field
     label: "Custom Python module"
@@ -63,14 +66,17 @@ attributes:
     wrapper:
       class: "custom_module"
     help: |
-      Use a different Python module than the modules in the list. Leave empty to use the system Python. Virtual environment must be used when using system python.
+      Specify a module to load, in the format `name` or `name/version`, e.g. *pytorch/2.1*.
+      Leave empty to use the system Python. A virtual environment must be used when using system python.
   jp_type:
       widget: select
       label: "Jupyter type"
       options:
         - ["Notebook","notebook"]
-        - ["Lab","lab", data-option-for-python-module-python-env: false]
+        - ["Lab","lab"]
       value: "notebook"
+      wrapper:
+        class: "advanced"
   csc_path:
     submit: notebook_dir
     label: "Working directory"
@@ -83,12 +89,16 @@ attributes:
     label: "Show advanced settings"
     widget: check_box
     value: "0"
-  python_user_site:
-    widget: check_box
-    label: "Enable user packages"
-    value: "1"
+  extra_packages:
+    widget: radio_button
+    label: "Additional packages"
+    options:
+      - ["Disabled", "none"]
+      - ["User packages", "user_packages"]
+      - ["Virtual environment", "venv"]
+    value: "none"
     help: |
-      Enables using packages installed to the user packages directory.
+      Select how the Python environment can be extended with additional packages.
   python_user_base:
     widget: text_field
     label: "User packages path"
@@ -96,13 +106,8 @@ attributes:
     wrapper:
       class: "advanced user_packages user_packages_field"
     help: |
-      Path to a directory to install user packages in under `/scratch` or `/projappl`.
-  enable_venv:
-    widget: check_box
-    label: "Use virtual environment"
-    value: "0"
-    help: |
-      Create or use existing [virtual environment](https://docs.python.org/3/library/venv.html) based on selected module.
+      Path to a directory to install user packages in under `/scratch` or `/projappl`. This will set the `PYTHONUSERBASE` environment variable.
+      If left empty, packages will be installed under `~/.local/lib`, which is not recommended due to the limited disk quota for the home directory.
   venv:
     widget: text_field
     label: "Virtual environment path"
@@ -111,11 +116,6 @@ attributes:
       class: "advanced venv"
     help: |
       Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv <path>` if it does not exist.
-  extra_jupyter_args:
-    label: "Extra Jupyter args"
-    value: ""
-    wrapper:
-      class: "advanced"
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
   csc_extra_desc:
@@ -133,16 +133,14 @@ form:
   - csc_nvme
   - csc_time
   - csc_header_settings
-  - python_module
+  - csc_module
   - custom_module
   - custom_path
-  - jp_type
   - csc_path
   - advanced
-  - enable_venv
+  - jp_type
+  - extra_packages
   - venv
-  - python_user_site
   - python_user_base
-  - extra_jupyter_args
   - csc_reset_cache
   - csc_slurm_limits
