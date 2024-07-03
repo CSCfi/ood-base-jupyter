@@ -33,7 +33,7 @@ module purge
 # List loaded modules
 module list
 
-<% if context.extra_packages == "venv" && !context.venv.blank? -%>
+<% if context.advanced == "1" && context.extra_packages == "venv" && !context.venv.blank? -%>
 
   # Verify that venv is not in home folder
   root_dir=$(readlink -m "<%= context.venv -%>" | cut -d "/" -f2)
@@ -90,21 +90,23 @@ module list
   export JUPYTER_DATA_DIR="<%= context.venv -%>/share/jupyter"
 <% end -%>
 
-<% if context.extra_packages != "user_packages" -%>
-  echo "Disabling user packages"
-  export PYTHONNOUSERSITE="TRUE"
-  # pytorch is known to require enabled user packages to find Jupyter, do a quick test for other modules
-  if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
-    if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
-      echo "Jupyter is installed only in user packages but user packages are disabled"
+<% if context.advanced == "1" %>
+  <% if context.extra_packages != "user_packages" -%>
+    echo "Disabling user packages"
+    export PYTHONNOUSERSITE="TRUE"
+    # pytorch is known to require enabled user packages to find Jupyter, do a quick test for other modules
+    if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
+      if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
+        echo "Jupyter is installed only in user packages but user packages are disabled"
+      fi
     fi
-  fi
-<% elsif !context.python_user_base.blank? -%>
-  echo "Using <%= context.python_user_base -%> for user packages"
-  mkdir -p "<%= context.python_user_base -%>"
-  unset PYTHONNOUSERSITE
-  export PYTHONUSERBASE="<%= context.python_user_base -%>"
-<% end -%>
+  <% elsif !context.python_user_base.blank? -%>
+    echo "Using <%= context.python_user_base -%> for user packages"
+    mkdir -p "<%= context.python_user_base -%>"
+    unset PYTHONNOUSERSITE
+    export PYTHONUSERBASE="<%= context.python_user_base -%>"
+  <% end -%>
+<% end %>
 
 jp_type="lab"
 # Check if JupyterLab version is higher than 3.0.0
