@@ -145,7 +145,7 @@ attributes:
     wrapper:
       class: "advanced venv"
     help: |
-      Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv <path>` if it does not exist.
+      Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv --system-site-packages <path>` if it does not exist.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
   csc_extra_desc:
