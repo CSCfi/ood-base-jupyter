@@ -28,6 +28,11 @@ function setup_extra_packages_field() {
   form_group.parent().addClass("advanced");
   inputs.css("opacity", "0");
   divs.removeClass("form-check").addClass("nav-link");
+  const pill_div = $("<div></div>").css("display", "flex").css("flex-wrap", "nowrap");
+  pill_div.append(divs);
+  form_group.append(pill_div);
+
+  pill_div.find(".form-check-label").css("height", "100%");
 
   inputs.change(function() {
     const input = $(this);
