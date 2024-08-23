@@ -24,8 +24,9 @@ function setup_extra_packages_field() {
   const divs = inputs.parent();
   // Style radio buttons into nav-pills style
   label.css("flex", "0 0 100%");
-  form_group.addClass("nav-pills user-select-none").css("display", "flex").css("flex-wrap", "wrap");
-  form_group.parent().addClass("advanced");
+  form_group.addClass("nav-pills user-select-none nav-pill-tabs").css("display", "flex").css("flex-wrap", "wrap");
+  form_group.parent().addClass("advanced").css("margin-bottom", "0");
+  form_group.parent().css("margin-bottom", "0rem");
   inputs.css("opacity", "0");
   divs.removeClass("form-check").addClass("nav-link");
   const pill_div = $("<div></div>").css("display", "flex").css("flex-wrap", "nowrap");
@@ -34,11 +35,25 @@ function setup_extra_packages_field() {
 
   pill_div.find(".form-check-label").css("height", "100%");
 
+  const help_text = form_group.parent().find(".form-text.text-muted");
+  label.after(help_text);
+  form_group.find("label").css("margin-bottom", "0");
+  help_text.find("p").css("margin-bottom", "0.5rem")
+
+  $(".user_packages_field, .venv")
+    .css("border", "rgb(51, 122, 183) 1px solid")
+    .css("border-radius", "0.25rem")
+    .css("border-top-left-radius", "0")
+    .css("padding", "0.5rem")
+    .css("margin-bottom", "0");
+  $(".user_packages_field").after($("<div></div>").css("padding", "0.5rem"));
+
   inputs.change(function() {
     const input = $(this);
     const all = input.closest(".form-group");
     all.find(".active").removeClass("active");
     input.parent().addClass("active");
+    all.toggleClass("expanded", !(this.value === "none"))
     $(".venv").toggleClass("d-none", !(this.value === "venv"));
     $(".user_packages_field").toggleClass("d-none", !(this.value === "user_packages"));
   });
