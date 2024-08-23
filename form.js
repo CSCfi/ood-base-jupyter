@@ -46,6 +46,7 @@ function setup_extra_packages_field() {
     .css("border-top-left-radius", "0")
     .css("padding", "0.5rem")
     .css("margin-bottom", "0");
+  $(".user_packages_field, .venv").find(".form-text.text-muted p").css("margin-bottom", "0");
   $(".user_packages_field").after($("<div></div>").css("padding", "0.5rem"));
 
   inputs.change(function() {
