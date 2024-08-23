@@ -28,7 +28,7 @@ function setup_extra_packages_field() {
   form_group.parent().addClass("advanced").css("margin-bottom", "0");
   form_group.parent().css("margin-bottom", "0rem");
   inputs.css("opacity", "0");
-  divs.removeClass("form-check").addClass("nav-link");
+  divs.removeClass("form-check").addClass("nav-link").css("border-left", "rgb(51, 122, 183) 1px solid");
   const pill_div = $("<div></div>").css("display", "flex").css("flex-wrap", "nowrap");
   pill_div.append(divs);
   form_group.append(pill_div);
