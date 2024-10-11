@@ -1,8 +1,8 @@
 %define app_path /www/ood/apps/sys/
 
 Name:           ood-base-jupyter
-Version:        7
-Release:        2%{?dist}
+Version:        8
+Release:        1%{?dist}
 Summary:        Open on Demand base jupyter app
 
 BuildArch:      noarch
