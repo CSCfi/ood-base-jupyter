@@ -50,7 +50,7 @@ which python
       exit_verbose "Unknown python path provided" 1
     fi
   <%- else -%>
-    <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/   -%>
+    <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
       ml use /appl/local/csc/modulefiles/
     <%- end -%>
     module load <%= context.python_module %>
