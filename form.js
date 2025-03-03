@@ -26,7 +26,7 @@ function setup_extra_packages_field() {
   label.css("flex", "0 0 100%");
   form_group.addClass("nav-pills user-select-none nav-pill-tabs").css("display", "flex").css("flex-wrap", "wrap");
   form_group.parent().addClass("advanced").css("margin-bottom", "0");
-  form_group.parent().css("margin-bottom", "0rem");
+  form_group.parent()[0].style.setProperty("margin-bottom", "0rem", "important"); // mb-3 is set as !important, need !important here as well to override
   inputs.css("opacity", "0");
   divs.removeClass("form-check").addClass("nav-link").css("border-left", "rgb(51, 122, 183) 1px solid").css("padding", "0");
   divs.find("label.form-check-label").css("padding", "0.5rem 1rem");
@@ -52,7 +52,7 @@ function setup_extra_packages_field() {
 
   inputs.change(function() {
     const input = $(this);
-    const all = input.closest(".form-group");
+    const all = input.closest(".mb-3");
     all.find(".active").removeClass("active");
     input.parent().addClass("active");
     all.toggleClass("expanded", !(this.value === "none"))
