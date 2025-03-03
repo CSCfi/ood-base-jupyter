@@ -1,35 +1,7 @@
-# Batch Connect app configuration file
-#
-# @note Used to define the submitted cluster, title, description, and
-#   hard-coded/user-defined attributes that make up this Batch Connect app.
 ---
-
-# **MUST** set cluster id here that matches cluster configuration file located
-# under /etc/ood/config/clusters.d/*.yml
-# @example Use the Owens cluster at Ohio Supercomputer Center
-#     cluster: "owens"
-
-# Define attribute values that aren't meant to be modified by the user within
-# the Dashboard form
+form_header: |
+  <a href="https://docs.csc.fi/computing/webinterface/jupyter/" target="_blank">Documentation</a>
 attributes:
-  # Set the corresponding modules that need to be loaded for Jupyter to run
-  #
-  # @note It is called within the batch job as `module load <modules>` if
-  #   defined
-  # @example Do not load any modules
-  #     modules: ""
-  # @example Using default python module
-  #     modules: "python"
-  # @example Using specific python module
-  #     modules: "python/3.5"
-  # @example Using combination of modules
-  #     modules: "python/3.5 cuda/8.0.44"
-  #modules: "python-env/2019.3"
-  #bc_queue: "test" 
-
-  # Any extra command line arguments to feed to the `jupyter notebook ...`
-  # command that launches the Jupyter notebook within the batch job
-
   csc_slurm_partition:
     value: "interactive"
     select:
@@ -149,9 +121,6 @@ attributes:
       Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv --system-site-packages <path>` if it does not exist.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
-  csc_extra_desc:
-    desc: |
-      <a href="https://docs.csc.fi/computing/webinterface/jupyter/" target="_blank">Documentation</a>
 
 form:
   - csc_extra_desc
