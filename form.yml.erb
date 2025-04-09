@@ -11,6 +11,8 @@
 
 # Define attribute values that aren't meant to be modified by the user within
 # the Dashboard form
+form_header: |
+  <a href="https://docs.lumi-supercomputer.eu/runjobs/webui/jupyter/" target="_blank">Documentation</a>
 attributes:
   # Set the corresponding modules that need to be loaded for Jupyter to run
   #
@@ -120,12 +122,8 @@ attributes:
         The script on the path provided will be sourced by bash before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
-  csc_extra_desc:
-    desc: |
-      <a href="https://docs.lumi-supercomputer.eu/runjobs/webui/jupyter/" target="_blank">Documentation</a>
 
 form:
-  - csc_extra_desc
   - csc_slurm_reservation
   - csc_slurm_project
   - csc_slurm_partition
