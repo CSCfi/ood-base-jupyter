@@ -22,7 +22,7 @@ cd "${HOME}"
     source "<%= context.custom_script %>"
   <% elsif context.env_script == "Container" %>
     container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl <%= context.custom_container -%>'
-    python="python"
+    python="python3"
   <% end %>
 <% else %>
 # Probably not safe on lumi

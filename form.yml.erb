@@ -128,7 +128,7 @@ attributes:
       wrapper:
          class: "advanced"
       help: |
-        Jupyter will be launched using the Python from the specified container, using `singularity exec -B ... python ...`. `/pfs`, `/users`, `/scratch`, `/projappl`, `/project`, `/flash`, and `/appl` will be mounted. Ensure that `jupyterlab` is installed in the Python environment in the container.
+        Jupyter will be launched using the Python from the specified container, using `singularity exec -B ... <container.sif> python3 -m jupyter ...`. `/pfs`, `/users`, `/scratch`, `/projappl`, `/project`, `/flash`, and `/appl` will be mounted. Ensure that `jupyterlab` is installed in the Python environment in the container.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
 
