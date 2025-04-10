@@ -22,7 +22,7 @@ function create_tabs() {
   const advanced_checkbox = $("#batch_connect_session_context_advanced");
 
   // Create basic tab with all .basic form elements and button for it.
-  const basic_form_groups = $(".basic").closest(".form-group");
+  const basic_form_groups = $(".basic").closest(".mb-3");
   const basic_tab = $("<div></div>", { "class": "basic" });
   const basic_option = $("<li></li>", { "class": "nav-item" });
   const basic_link = $("<a></a>", { "id": "basic_tab_link", "class": "nav-link" })
@@ -32,7 +32,7 @@ function create_tabs() {
   basic_tab.append(basic_form_groups);
 
   // Create advanced tab with all .advanced form elements and button for it.
-  const advanced_form_groups = $(".advanced").closest(".form-group");
+  const advanced_form_groups = $(".advanced").closest(".mb-3");
   const advanced_tab = $("<div></div>", { "class": "advanced" });
   const advanced_option = $("<li></li>", { "class": "nav-item" });
   const advanced_link = $("<a></a>", { "id": "advanced_tab_link", "class": "nav-link" })
@@ -45,7 +45,8 @@ function create_tabs() {
   const nav_pills = $("<ul></ul>", {"class": "nav nav-pills mb-3 user-select-none", "css": {"width": "fit-content"}});
   nav_pills.append(basic_option);
   nav_pills.append(advanced_option);
-  advanced_checkbox.closest(".form-group").after(nav_pills, basic_tab, advanced_tab);
+  advanced_checkbox.closest(".mb-3").after(nav_pills, basic_tab, advanced_tab);
+  $(".mb-3 > .form-check").css("min-height", "unset");
 }
 
 function update_visibility(selector, show) {
