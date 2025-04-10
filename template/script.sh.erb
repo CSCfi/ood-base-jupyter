@@ -20,6 +20,9 @@ cd "${HOME}"
   <% elsif context.env_script == "File" %>
     echo "Sourcing <%= context.custom_script %>"
     source "<%= context.custom_script %>"
+  <% elsif context.env_script == "Container" %>
+    container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl <%= context.custom_container -%>'
+    python="python"
   <% end %>
 <% else %>
 # Probably not safe on lumi
@@ -27,8 +30,8 @@ cd "${HOME}"
 
 echo "Using python from"
 which python
-  python="python"
-  <% if context.python_module == "Custom" -%>
+python="${python:-python}"
+<% if context.python_module == "Custom" -%>
     python_path="<%= context.custom_python_path %>"
     if [[ -f "$python_path" && -x "$python_path" ]]; then
     # User provided full path to python executable
@@ -122,17 +125,16 @@ which python
       fi
     <% end -%>
   fi
-
 <% end %>
 
 
 jp_type="lab"
 # Check if JupyterLab version is higher than 3.0.0
-has_jupyterlab=$(${python:-python} -c 'from packaging import version;import jupyterlab; print(version.parse(jupyterlab.__version__) >= version.parse("3.0.0"))')
+has_jupyterlab=$($container_command ${python:-python} -c 'from packaging import version;import jupyterlab; print(version.parse(jupyterlab.__version__) >= version.parse("3.0.0"))')
 if [[ "$has_jupyterlab" == "True" ]]; then
   # Some modules don't have the extensions enabled, enable them for user
-  ${python:-python} -m jupyter server extension enable --user --py nbclassic
-  ${python:-python} -m jupyter server extension enable --user --py jupyterlab
+  $container_command ${python:-python} -m jupyter server extension enable --user --py nbclassic
+  $container_command ${python:-python} -m jupyter server extension enable --user --py jupyterlab
 else
   # Fall back to notebook if Jupyter Lab isn't installed or too old version
   sed -i 's/\.ServerApp\./.NotebookApp./g' $CONFIG_FILE
@@ -144,4 +146,4 @@ fi
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
-${python:-python} -m jupyter $jp_type --config="${CONFIG_FILE}"
+${container_command} ${python:-python} -m jupyter $jp_type --config="${CONFIG_FILE}"

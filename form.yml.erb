@@ -102,8 +102,9 @@ attributes:
       wrapper:
         class: "advanced"
       options:
-          - ["Text","Text",{  data-hide-custom-script: true}]
-          - ["File","File",{ data-hide-custom-start: true }]
+          - ["Text","Text", { data-hide-custom-script: true, data-hide-custom-container: true }]
+          - ["File","File", { data-hide-custom-start: true, data-hide-custom-container: true }]
+          - ["Container","Container", { data-hide-custom-start: true, data-hide-custom-script: true }]
   custom_start:
       label: "Script to start"
       widget: "text_area"
@@ -120,6 +121,14 @@ attributes:
          class: "advanced"
       help: |
         The script on the path provided will be sourced by bash before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
+  custom_container:
+      label: "Path to container with Python"
+      widget: "text_field"
+      value: ""
+      wrapper:
+         class: "advanced"
+      help: |
+        Jupyter will be launched using the Python from the specified container, using `singularity exec -B ... python ...`. `/pfs`, `/users`, `/scratch`, `/projappl`, `/project`, `/flash`, and `/appl` will be mounted. Ensure that `jupyterlab` is installed in the Python environment in the container.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
 
@@ -145,5 +154,6 @@ form:
   - env_script
   - custom_start
   - custom_script
+  - custom_container
   - csc_reset_cache
   - csc_slurm_limits
