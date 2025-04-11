@@ -16,7 +16,7 @@ cd "${HOME}"
 <% if context.advanced == "1" %>
   <% if context.env_script == "Text" %>
     echo "Running user-provided script"
-    <%= context.custom_start %>
+    <%= context.custom_start.gsub(/\r\n?/, "\n") %>
   <% elsif context.env_script == "File" %>
     echo "Sourcing <%= context.custom_script %>"
     source "<%= context.custom_script %>"
