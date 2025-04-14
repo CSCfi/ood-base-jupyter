@@ -52,7 +52,7 @@ attributes:
           - ["cray-python (3.9.13)", "cray-python/3.9.13.1", data-hide-custom-python-path: true]
           - ["geoconda ( Via CSC stack, limited support available )", "geoconda", data-hide-custom-python-path: true]
           - ["pytorch ( Via CSC stack, limited support available )", "pytorch", data-hide-custom-python-path: true]
-          - ["Custom"]
+          - ["Custom", "custom"]
       wrapper:
         class: "basic"
   custom_python_path:
@@ -83,54 +83,68 @@ attributes:
     label: "Virtual environment path"
     value : ""
     wrapper:
-      class: "venv basic"
+      class: "venv"
     help: |
       Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv <path>` if it does not exist. Leave empty to ignore.
   system_site:
       label: "Enable system installed packages on venv creation"
       widget: check_box
       value: "1"
-      wrapper_class: "basic"
+      wrapper_class: "venv"
   user_packages:
       label: "Enable packages under ~/.local/lib on venv start"
       widget: check_box
       value: "0"
-      wrapper_class: "basic"
-  env_script:
-      label: "Custom init"
-      widget: select
-      wrapper:
-        class: "advanced"
-      options:
-          - ["Text","Text", { data-hide-custom-script: true, data-hide-custom-container: true }]
-          - ["File","File", { data-hide-custom-start: true, data-hide-custom-container: true }]
-          - ["Container","Container", { data-hide-custom-start: true, data-hide-custom-script: true }]
-  custom_start:
-      label: "Script to start"
-      widget: "text_area"
-      value: ""
-      wrapper:
-        class: "advanced"
-      help: |
-        The bash script provided in the text box will be run before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
+      wrapper_class: "venv"
+  custom_type:
+    label: "Custom Python type"
+    widget: select
+    wrapper:
+      class: "advanced"
+    options:
+        - ["Script", "script", { data-hide-custom-script: false, data-hide-container-path: true, data-hide-container-modules: true, data-hide-container-init: true, data-hide-container-args: true}]
+        - ["Container", "container", { data-hide-custom-start: true, data-hide-custom-script: true }]
   custom_script:
-      label: "Path to script"
-      widget: "text_field"
+      label: "Script or path to script"
+      widget: "text_area"
       value: ""
       wrapper:
          class: "advanced"
       help: |
-        The script on the path provided will be sourced by bash before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
-  custom_container:
+        The provided script will be run before starting Jupyter. If a path to a script is provided, it will be sourced by bash before starting Jupyter. Ensure that the script sets up the environment so that `python` is in `PATH` and Jupyter is installed.
+  container_modules:
+    label: "Modules to load"
+    widget: "text_field"
+    value: ""
+    wrapper_class: "advanced"
+    help: |
+      Specify modules to load, separated with spaces, e.g. `LUMI/23.09 PyTorch/2.2.0`.
+  container_args:
+    label: "Container arguments"
+    widget: "text_field"
+    value: ""
+    wrapper_class: "advanced"
+    help: |
+      Extra Singularity arguments, e.g. `-B /some/path:/some/other/path`
+  container_path:
       label: "Path to container with Python"
       widget: "text_field"
       value: ""
       wrapper:
          class: "advanced"
       help: |
-        Jupyter will be launched using the Python from the specified container, using `singularity exec -B ... <container.sif> python3 -m jupyter ...`.
-        The following paths will be mounted in to the container: `/pfs`, `/users`, `/scratch`, `/projappl`, `/project`, `/flash`, and `/appl`.
-        Ensure that `jupyterlab` is installed in the Python environment in the container.
+        Jupyter will be launched using the Python from the specified container, using `singularity exec -B ... <container.sif> python3 -m jupyter ...`.  
+        The following paths will be mounted in to the container: `/pfs`, `/users`, `/scratch`, `/projappl`, `/project`, `/flash`, and `/appl`.  
+        If `jupyterlab` is not installed in the Python environment, ensure that you specify a virtual environment path below, which will be used to install Jupyterlab.
+  container_init:
+    label: "Init script for container"
+    widget: "text_field"
+    value: ""
+    wrapper:
+      class: "advanced"
+    help: |
+      Commands to run inside the container before Python is run. Can be used for activating the container conda environment, e.g. `source /opt/miniconda3/bin/activate pytorch`.
+
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
 
@@ -149,13 +163,15 @@ form:
   - csc_path
   - advanced
   - python_module
+  - custom_type
+  - custom_script
   - custom_python_path
+  - container_modules
+  - container_path
+  - container_args
+  - container_init
   - venv
   - system_site
   - user_packages
-  - env_script
-  - custom_start
-  - custom_script
-  - custom_container
   - csc_reset_cache
   - csc_slurm_limits

@@ -6,6 +6,10 @@
   update_advanced();
   const venv = $("#batch_connect_session_context_venv");
   venv.change(validate_venv);
+
+  const custom_type = $("#batch_connect_session_context_custom_type");
+  custom_type.change(update_venv_visibility)
+  update_venv_visibility();
 })();
 
 function update_advanced() {
@@ -16,6 +20,7 @@ function update_advanced() {
 
   update_visibility(".advanced", show_advanced);
   update_visibility(".basic", !show_advanced);
+  update_venv_visibility();
 }
 
 function create_tabs() {
@@ -56,6 +61,12 @@ function update_visibility(selector, show) {
     $(this).toggleClass("d-none", !show);
   });
 
+}
+
+function update_venv_visibility() {
+  const show_venv = !($("#batch_connect_session_context_custom_type").val() === "script");
+  const show_advanced = $("#batch_connect_session_context_advanced").prop("checked");
+  update_visibility(".venv", !show_advanced || show_venv );
 }
 
 function validate_venv() {

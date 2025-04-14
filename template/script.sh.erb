@@ -14,30 +14,40 @@ echo "TIMING - Starting main script at: $(date)"
 cd "${HOME}"
 
 <% if context.advanced == "1" %>
-  <% if context.env_script == "Text" %>
-    echo "Running user-provided script"
-    <%= context.custom_start.gsub(/\r\n?/, "\n") %>
-  <% elsif context.env_script == "File" %>
-    echo "Sourcing <%= context.custom_script %>"
-    source "<%= context.custom_script %>"
-  <% elsif context.env_script == "Container" %>
-    container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl <%= context.custom_container -%>'
-    python="python3"
+  <% if context.custom_type == "script" %>
+    <% custom_script = context.custom_script.gsub(/\r\n?/, "\n") %>
+    if [ -f "$custom_script" ]; then
+      echo "Sourcing $custom_script"
+      source "<%= custom_script %>"
+    else
+      echo "Running user-provided script"
+      <%= custom_script %>
+    fi
+  <% elsif context.custom_type == "container" %>
+    module load <%= context.container_modules %>
+    container_init='<%= context.container_init -%>'
+    <% if !context.container_path.strip.empty? %>
+      container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl <%= context.container_args -%> <%= context.container_path -%>'
+      python () {
+        $container_command bash -c "$container_init${container_init:+;} python3 $(printf "%q " "$@")"
+      }
+    <% end %>
+    echo "Using python from container, container_command: $container_command"
   <% end %>
-<% else %>
-# Probably not safe on lumi
-#  module purge
+<% end %>
 
-echo "Using python from"
-which python
 python="${python:-python}"
-<% if context.python_module == "Custom" -%>
+<% if context.advanced == "0" || (context.advanced == "1" && context.custom_type == "container") %>
+  <% if context.python_module == "custom" -%>
+    echo 'Custom python interpreter path set: <%= context.custom_python_path %>'
     python_path="<%= context.custom_python_path %>"
     if [[ -f "$python_path" && -x "$python_path" ]]; then
-    # User provided full path to python executable
+      echo "Custom python is an executable file"
+      # User provided full path to python executable
       python="$python_path"
       export PATH="$(dirname "$python_path"):$PATH"
     elif [[ -d $python_path && "$(basename "$python_path")" = "bin" ]]; then
+      echo "Custom python is a bin directory with python"
       # User provided a path to a bin directory with a python executable
       export PATH="$python_path:$PATH"
       if [[ "$(dirname "$(command -v python)")" = "${python_path%%/}" ]]; then
@@ -45,18 +55,20 @@ python="${python:-python}"
       else
         # User provided a bin path but no python was found
         # TODO: allow python3 binary instead of just python?
-        exit_verbose "Python not found in provided path" 1
+        exit_verbose "Python not found in provided path: $python_path" 1
       fi
     else
       # User provided something that wasn't either a path to python binary or bin directory
       # TODO: attempt to load module here?
       exit_verbose "Unknown python path provided" 1
     fi
-  <%- else -%>
+  <%- elsif context.advanced == "1" -%>
+  <% else %>
     <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
+      echo "CSC Python module selected, enabling CSC stack"
       ml use /appl/local/csc/modulefiles/
     <%- end -%>
-    module load <%= context.python_module %>
+      module load <%= context.python_module %>
       # If there is no venv set and cray python selected add a minimal set of packages
       # containing the notebook software. 
       <% if context.python_module =~ /cray-python/ -%>
@@ -77,11 +89,16 @@ python="${python:-python}"
   if [ ! -z "$venv" ]; then
     if [[ -f "$venv/bin/activate" ]]; then
       echo "Activating venv at $venv"
-      source "$venv/bin/activate"
-      unset python
+      if [ ! -z "${container_command+x}" ]; then
+        python () {
+          $container_command bash -c "$container_init${container_init:+;} source \"$venv/bin/activate\"; python3 $(printf "%q " "$@")"
+        }
+      else
+        source "$venv/bin/activate"
+        python=${python:-python}
+      fi
     else
       echo "Creating new venv at $venv"
-
       # --system-site-packages does not work properly with the module system
       # packages from the module are added if module is loaded when activating venv
       error_msg=$($python -m venv "$venv" <%= "--system-site-packages" if context.system_site == "1" -%> 2>&1 > /dev/null)
@@ -92,8 +109,14 @@ python="${python:-python}"
 
       echo "Activating created venv at $venv"
 
-      source "$venv/bin/activate"
-      unset python
+      if [ ! -z "${container_command+x}" ]; then
+        python () {
+          $container_command bash -c "$container_init${container_init:+;} source \"$venv/bin/activate\"; python3 $(printf "%q " "$@")"
+        }
+      else
+        source "$venv/bin/activate"
+        python=${python:-python}
+      fi
 
       # Set PYTHONNOUSERSITE already to avoid accidentally installing into user packages if venv is not writable.
       <% if context.user_packages == "0" -%>
@@ -101,15 +124,15 @@ python="${python:-python}"
       <% end -%>
 
       # Install jupyterlab if there is no jupyter installed (system python only)
-      if [[ ! $(command -v jupyter) ]]; then
+      if [[ ! $(command -v jupyter) && -z "${container_command+x}" ]] || [[ ! -z "${container_command+x}" && ! $(${python:-python} -m jupyterlab --help) ]]; then
         echo "Installing jupyterlab"
-        python -m pip install jupyterlab nbclassic
+        ${python:-python} -m pip install jupyterlab nbclassic
       fi
 
     fi
 
     # Install kernel that points to the venv python
-    python -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3 (venv)"
+    ${python:-python} -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3 (venv)"
 
     # Set JUPYTER_DATA_DIR to find kernels from this venv
     export JUPYTER_DATA_DIR="$venv/share/jupyter"
@@ -129,21 +152,12 @@ python="${python:-python}"
 
 
 jp_type="lab"
-# Check if JupyterLab version is higher than 3.0.0
-has_jupyterlab=$($container_command ${python:-python} -c 'from packaging import version;import jupyterlab; print(version.parse(jupyterlab.__version__) >= version.parse("3.0.0"))')
-if [[ "$has_jupyterlab" == "True" ]]; then
-  # Some modules don't have the extensions enabled, enable them for user
-  $container_command ${python:-python} -m jupyter server extension enable --user --py nbclassic
-  $container_command ${python:-python} -m jupyter server extension enable --user --py jupyterlab
-else
-  # Fall back to notebook if Jupyter Lab isn't installed or too old version
-  sed -i 's/\.ServerApp\./.NotebookApp./g' $CONFIG_FILE
-  sed -i 's/\.root_dir/.notebook_dir/g' $CONFIG_FILE
-  jp_type="notebook"
-fi
+
+${python:-python} -m jupyter server extension enable --user --py nbclassic
+${python:-python} -m jupyter server extension enable --user --py jupyterlab
 
 # Benchmark info
 echo "TIMING - Starting jupyter at: $(date)"
 # Launch the Jupyter Notebook Server
 set -x
-${container_command} ${python:-python} -m jupyter $jp_type --config="${CONFIG_FILE}"
+${python:-python} -m jupyter $jp_type --config="${CONFIG_FILE}"
