@@ -78,6 +78,16 @@ attributes:
     value: "0"
     hidden: true
     skip_label: true
+  enable_venv:
+    label: "Enable virtual environment"
+    widget: check_box
+    value: "0"
+    wrapper_class: "venv"
+    html_options:
+      data:
+        hide-venv-when-un-checked: true
+        hide-system-site-when-un-checked: true
+        hide-user-packages-when-un-checked: true
   venv:
     widget: text_field
     label: "Virtual environment path"
@@ -170,6 +180,7 @@ form:
   - container_path
   - container_args
   - container_init
+  - enable_venv
   - venv
   - system_site
   - user_packages
