@@ -37,7 +37,7 @@ cd "${HOME}"
 <% end %>
 
 python="${python:-python}"
-<% if context.enable_venv == "1" && (context.advanced == "0" || (context.advanced == "1" && context.custom_type == "container")) %>
+<% if context.advanced == "0" || (context.advanced == "1" && context.custom_type == "container") %>
   <% if context.python_module == "custom" -%>
     echo 'Custom python interpreter path set: <%= context.custom_python_path %>'
     python_path="<%= context.custom_python_path %>"
@@ -86,7 +86,7 @@ python="${python:-python}"
 
   venv="<%= context.venv -%>"
   venv="${venv%/bin/activate}"
-  if [ ! -z "$venv" ]; then
+  if [[ '<%= context.enable_venv -%>' == "1" && ! -z "$venv" ]]; then
     if [[ -f "$venv/bin/activate" ]]; then
       echo "Activating venv at $venv"
       if [ ! -z "${container_command+x}" ]; then
