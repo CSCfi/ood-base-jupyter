@@ -95,7 +95,7 @@ attributes:
     wrapper:
       class: "venv"
     help: |
-      Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv <path>` if it does not exist. Leave empty to ignore.
+      Path to a virtual environment under `/scratch/$PROJECT` or `/projappl/$PROJECT`. A new virtual environment will be created using `python -m venv <path>` if it does not exist. No virtual environment will be used if left empty.
   system_site:
       label: "Enable system installed packages on venv creation"
       widget: check_box

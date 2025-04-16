@@ -27,7 +27,7 @@ cd "${HOME}"
     module load <%= context.container_modules %>
     container_init='<%= context.container_init -%>'
     <% if !context.container_path.strip.empty? %>
-      container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl <%= context.container_args -%> <%= context.container_path -%>'
+      container_command='singularity exec -B /pfs,/users,/scratch,/projappl,/project,/flash,/appl '"<%= context.container_args -%>"' '"<%= context.container_path -%>"
       python () {
         $container_command bash -c "$container_init${container_init:+;} python3 $(printf "%q " "$@")"
       }
