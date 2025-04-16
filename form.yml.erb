@@ -44,6 +44,9 @@ attributes:
       - "debug"
       - "q_fiqci"
       - "q_industry"
+  csc_slurm_project:
+    help: |
+      The selected project will be available as `$PROJECT` in other fields in this form.
   python_module:
       label: Python
       widget: select
@@ -69,6 +72,8 @@ attributes:
     label: "Working directory"
     paths:
       - "HOME"
+      - "/scratch/$PROJECT"
+      - "/project/$PROJECT"
       - "SCRATCH"
       - "PROJAPPL"
       - "/"
