@@ -72,7 +72,7 @@ python="${python:-python}"
       # If there is no venv set and cray python selected add a minimal set of packages
       # containing the notebook software. 
       <% if context.python_module =~ /cray-python/ -%>
-        <% if context.venv == "" -%>
+        <% if context.enable_venv == "0" || if context.venv == "" -%>
           _PY_VER="<%= context.python_module.split('/',2)[1].split('.',3).slice(0,2).join('.') -%>"
           export PYTHONPATH=$PYTHONPATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/
           export PATH=$PATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/bin/
