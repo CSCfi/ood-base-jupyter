@@ -62,8 +62,7 @@ python="${python:-python}"
       # TODO: attempt to load module here?
       exit_verbose "Unknown python path provided" 1
     fi
-  <%- elsif context.advanced == "1" -%>
-  <% else %>
+  <% elsif context.advanced != "1" %>
     <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
       echo "CSC Python module selected, enabling CSC stack"
       ml use /appl/local/csc/modulefiles/
