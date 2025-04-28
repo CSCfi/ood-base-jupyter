@@ -27,7 +27,7 @@ function setup_extra_packages_field() {
   form_group.addClass("nav-pills user-select-none nav-pill-tabs").css("display", "flex").css("flex-wrap", "wrap");
   form_group.parent().addClass("advanced").css("margin-bottom", "0");
   form_group.parent()[0].style.setProperty("margin-bottom", "0rem", "important"); // mb-3 is set as !important, need !important here as well to override
-  inputs.css("opacity", "0");
+  inputs.css("display", "none");
   divs.removeClass("form-check").addClass("nav-link").css("border-left", "rgb(51, 122, 183) 1px solid").css("padding", "0");
   divs.find("label.form-check-label").css("padding", "0.5rem 1rem");
   const pill_div = $("<div></div>").css("display", "flex").css("flex-wrap", "nowrap");
