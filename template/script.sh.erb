@@ -38,35 +38,36 @@ cd "${HOME}"
 
 python="${python:-python}"
 <% if context.advanced == "0" || (context.advanced == "1" && context.custom_type == "container") %>
-  <% if context.python_module == "custom" -%>
-    echo 'Custom python interpreter path set: <%= context.custom_python_path %>'
-    python_path="<%= context.custom_python_path %>"
-    if [[ -f "$python_path" && -x "$python_path" ]]; then
-      echo "Custom python is an executable file"
-      # User provided full path to python executable
-      python="$python_path"
-      export PATH="$(dirname "$python_path"):$PATH"
-    elif [[ -d $python_path && "$(basename "$python_path")" = "bin" ]]; then
-      echo "Custom python is a bin directory with python"
-      # User provided a path to a bin directory with a python executable
-      export PATH="$python_path:$PATH"
-      if [[ "$(dirname "$(command -v python)")" = "${python_path%%/}" ]]; then
-        python="$(command -v python)"
+  <% if context.advanced == "0" %>
+    <% if context.python_module == "custom" -%>
+      echo 'Custom python interpreter path set: <%= context.custom_python_path %>'
+      python_path="<%= context.custom_python_path %>"
+      if [[ -f "$python_path" && -x "$python_path" ]]; then
+        echo "Custom python is an executable file"
+        # User provided full path to python executable
+        python="$python_path"
+        export PATH="$(dirname "$python_path"):$PATH"
+      elif [[ -d $python_path && "$(basename "$python_path")" = "bin" ]]; then
+        echo "Custom python is a bin directory with python"
+        # User provided a path to a bin directory with a python executable
+        export PATH="$python_path:$PATH"
+        if [[ "$(dirname "$(command -v python)")" = "${python_path%%/}" ]]; then
+          python="$(command -v python)"
+        else
+          # User provided a bin path but no python was found
+          # TODO: allow python3 binary instead of just python?
+          exit_verbose "Python not found in provided path: $python_path" 1
+        fi
       else
-        # User provided a bin path but no python was found
-        # TODO: allow python3 binary instead of just python?
-        exit_verbose "Python not found in provided path: $python_path" 1
+        # User provided something that wasn't either a path to python binary or bin directory
+        # TODO: attempt to load module here?
+        exit_verbose "Unknown python path provided" 1
       fi
-    else
-      # User provided something that wasn't either a path to python binary or bin directory
-      # TODO: attempt to load module here?
-      exit_verbose "Unknown python path provided" 1
-    fi
-  <% elsif context.advanced == "0" %>
-    <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
-      echo "CSC Python module selected, enabling CSC stack"
-      ml use /appl/local/csc/modulefiles/
-    <% end %>
+    <% else %>
+      <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
+        echo "CSC Python module selected, enabling CSC stack"
+        ml use /appl/local/csc/modulefiles/
+      <% end %>
       module load <%= context.python_module %>
       # If there is no venv set and cray python selected add a minimal set of packages
       # containing the notebook software. 
@@ -78,6 +79,7 @@ python="${python:-python}"
           export JUPYTERLAB_DIR=/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/share/jupyter/lab/
         <% end %>
       <% end %>
+    <% end %>
   <% end %>
 
   # List loaded modules
