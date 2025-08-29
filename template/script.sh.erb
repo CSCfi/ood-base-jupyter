@@ -133,7 +133,7 @@ python="${python:-python}"
     fi
 
     # Install kernel that points to the venv python
-    ${python:-python} -m ipykernel install --prefix="<%= context.venv -%>" --name="python3" --display-name="Python 3 (venv)"
+    ${python:-python} -m ipykernel install --prefix="<%= context.venv -%>" --name="ood_venv_python3" --display-name="Python 3 (venv)"
 
     # Set JUPYTER_DATA_DIR to find kernels from this venv
     export JUPYTER_DATA_DIR="$venv/share/jupyter"
