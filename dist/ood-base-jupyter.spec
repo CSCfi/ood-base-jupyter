@@ -1,7 +1,7 @@
 %define app_path /www/ood/apps/sys/
 
 Name:           ood-base-jupyter
-Version:        12
+Version:        13
 Release:        1%{?dist}
 Summary:        Open on Demand base jupyter app
 
