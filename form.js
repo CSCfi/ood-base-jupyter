@@ -19,7 +19,7 @@
 
 function setup_extra_packages_field() {
   const label = $('label[for="batch_connect_session_context_extra_packages"]');
-  const form_group = label.parent();
+  const form_group = $("#batch_connect_session_context_extra_packages_wrapper > .mb-3");
   const inputs = form_group.find("input[type=radio]");
   const divs = inputs.parent();
   // Style radio buttons into nav-pills style
