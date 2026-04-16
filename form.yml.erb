@@ -57,7 +57,7 @@ attributes:
           - ["pytorch ( Via CSC stack, limited support available )", "pytorch", data-hide-custom-python-path: true]
           - ["Custom", "custom"]
       wrapper:
-        class: "basic"
+        class: "basic mb-3"
   custom_python_path:
     widget: text_field
     label: "Path to python"
@@ -115,7 +115,7 @@ attributes:
     label: "Custom Python type"
     widget: select
     wrapper:
-      class: "advanced"
+      class: "advanced mb-3"
     options:
         - ["Script", "script", { data-hide-custom-script: false, data-hide-container-path: true, data-hide-container-modules: true, data-hide-container-init: true, data-hide-container-args: true}]
         - ["Container", "container", { data-hide-custom-start: true, data-hide-custom-script: true }]
