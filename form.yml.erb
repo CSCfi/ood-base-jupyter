@@ -79,7 +79,7 @@ attributes:
         - ["Notebook","notebook"]
       value: "lab"
       wrapper:
-        class: "advanced"
+        class: "advanced mb-3"
   csc_path:
     submit: notebook_dir
     label: "Working directory"
@@ -121,6 +121,9 @@ attributes:
       Path to a virtual environment under `/scratch/${your_project}` or `/projappl/${your_project}`. A new virtual environment will be created using `python -m venv --system-site-packages <path>` if it does not exist.
   csc_reset_cache:
     app: "sys/ood-base-jupyter"
+  bc_email_on_started:
+    wrapper:
+      class: "mt-3"
 
 form:
   - csc_slurm_reservation

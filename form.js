@@ -19,7 +19,7 @@
 
 function setup_extra_packages_field() {
   const label = $('label[for="batch_connect_session_context_extra_packages"]');
-  const form_group = $("#batch_connect_session_context_extra_packages_wrapper > .mb-3");
+  const form_group = label.parent().parent(); //$("#batch_connect_session_context_extra_packages_wrapper > .mb-3");
   const inputs = form_group.find("input[type=radio]");
   const divs = inputs.parent();
   // Style radio buttons into nav-pills style
@@ -38,6 +38,7 @@ function setup_extra_packages_field() {
 
   const help_text = form_group.parent().find(".form-text.text-muted");
   label.after(help_text);
+  label.parent().removeClass("mb-3");
   form_group.find("label").css("margin-bottom", "0");
   help_text.find("p").css("margin-bottom", "0.5rem")
 
@@ -48,14 +49,13 @@ function setup_extra_packages_field() {
     .css("padding", "0.5rem")
     .css("margin-bottom", "0");
   $(".user_packages_field, .venv").find(".form-text.text-muted p").css("margin-bottom", "0");
-  $(".user_packages_field").after($("<div></div>").css("padding", "0.5rem"));
 
   inputs.change(function() {
     const input = $(this);
     const all = input.closest(".mb-3");
     all.find(".active").removeClass("active");
     input.parent().addClass("active");
-    all.toggleClass("expanded", !(this.value === "none"))
+    all.find(".nav-pills").toggleClass("expanded", !(this.value === "none"))
     $(".venv").toggleClass("d-none", !(this.value === "venv"));
     $(".user_packages_field").toggleClass("d-none", !(this.value === "user_packages"));
   });
