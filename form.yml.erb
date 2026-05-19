@@ -51,13 +51,35 @@ attributes:
       label: Python
       widget: select
       options:
-          - ["cray-python (3.11.7)", "cray-python/3.11.7", data-hide-custom-python-path: true]
-          - ["cray-python (3.10.10)", "cray-python/3.10.10", data-hide-custom-python-path: true]
+          - ["cray-python", "cray-python", data-hide-custom-python-path: true]
+          - ["lumi-multitorch (PyTorch)", "lumi-multitorch", data-hide-custom-python-path: true]
           - ["geoconda ( Via CSC stack, limited support available )", "geoconda", data-hide-custom-python-path: true]
-          - ["pytorch ( Via CSC stack, limited support available )", "pytorch", data-hide-custom-python-path: true]
-          - ["Custom", "custom"]
+          - ["pytorch ( Via CSC stack, limited support available, deprecated )", "pytorch", data-hide-custom-python-path: true]
+          - ["Custom", "custom", data-hide-csc-module: true]
       wrapper:
         class: "basic mb-3"
+  csc_module:
+    submit: full_python_module
+    label: "Module version"
+    options:
+      - spider:
+          name: "cray-python"
+          data:
+            - data-exclusive-option-for-python-module-cray-python: true
+      - spider:
+          name: "pytorch"
+          data:
+            - data-exclusive-option-for-python-module-pytorch: true
+      - spider:
+          name: "geoconda"
+          data:
+            - data-exclusive-option-for-python-module-geoconda: true
+      - spider:
+          name: "lumi-multitorch"
+          data:
+            - data-exclusive-option-for-python-module-lumi-multitorch: true
+    help: |
+      Specify the version of the module you would like to use.
   custom_python_path:
     widget: text_field
     label: "Path to python"
@@ -178,6 +200,7 @@ form:
   - csc_path
   - advanced
   - python_module
+  - csc_module
   - custom_type
   - custom_script
   - custom_python_path

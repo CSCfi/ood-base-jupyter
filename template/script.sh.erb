@@ -36,6 +36,21 @@ cd "${HOME}"
   <% end %>
 <% end %>
 
+<% if context.advanced == "0" && context.python_module =~ /lumi-multitorch/ %>
+  module use "/appl/local/laifs/ood"
+  module load "<%= context.full_python_module.presence || context.python_module %>"
+  container_init=''
+  if [[ -z "$SIF" ]]; then
+    echo "\$SIF is not defined"
+    exit_verbose "\$SIF missing from the lumi-multitorch module (<%= context.full_python_module %>)"
+  fi
+  container_command='singularity exec '"<%= context.container_args -%>"' '"$SIF"
+  python () {
+    $container_command bash -c "$container_init${container_init:+;} python3 $(printf "%q " "$@")"
+  }
+  echo "Using python from LUMI AIF container, container_command: $container_command"
+<% end %>
+
 python="${python:-python}"
 <% if context.advanced == "0" || (context.advanced == "1" && context.custom_type == "container") %>
   <% if context.advanced == "0" %>
@@ -63,17 +78,17 @@ python="${python:-python}"
         # TODO: attempt to load module here?
         exit_verbose "Unknown python path provided" 1
       fi
-    <% else %>
+    <% elsif context.python_module !~ /lumi-multitorch/ %>
       <% if context.python_module =~ /base-py/ or context.python_module =~ /pytorch/ or context.python_module =~ /geoconda/ -%>
         echo "CSC Python module selected, enabling CSC stack"
         ml use /appl/local/csc/modulefiles/
       <% end %>
-      module load <%= context.python_module %>
+      module load <%= context.full_python_module.presence || context.python_module %>
       # If there is no venv set and cray python selected add a minimal set of packages
       # containing the notebook software. 
       <% if context.python_module =~ /cray-python/ -%>
         <% if context.enable_venv == "0" || context.venv == "" -%>
-          _PY_VER="<%= context.python_module.split('/',2)[1].split('.',3).slice(0,2).join('.') -%>"
+          _PY_VER="<%= (context.full_python_module.presence || context.python_module).split('/',2)[1].split('.',3).slice(0,2).join('.') -%>"
           export PYTHONPATH=$PYTHONPATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/
           export PATH=$PATH:/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/bin/
           export JUPYTERLAB_DIR=/appl/local/ood/$SLURM_OOD_ENV/soft/base_py/$_PY_VER/share/jupyter/lab/
