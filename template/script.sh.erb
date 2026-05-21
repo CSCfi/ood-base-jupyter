@@ -44,7 +44,7 @@ cd "${HOME}"
     echo "\$SIF is not defined"
     exit_verbose "\$SIF missing from the lumi-multitorch module (<%= context.full_python_module %>)"
   fi
-  container_command='singularity exec '"<%= context.container_args -%>"' '"$SIF"
+  container_command='singularity exec '"$SIF"
   python () {
     $container_command bash -c "$container_init${container_init:+;} python3 $(printf "%q " "$@")"
   }
