@@ -16,9 +16,10 @@ cd "${HOME}"
 <% if context.advanced == "1" %>
   <% if context.custom_type == "script" %>
     <% custom_script = context.custom_script.gsub(/\r\n?/, "\n") %>
+    custom_script=<%= custom_script.shellescape %>
     if [ -f "$custom_script" ]; then
       echo "Sourcing $custom_script"
-      source "<%= custom_script %>"
+      source "$custom_script"
     else
       echo "Running user-provided script"
       <%= custom_script %>
@@ -111,7 +112,7 @@ python="${python:-python}"
         }
       else
         source "$venv/bin/activate"
-        python=${python:-python}
+        unset -v python
       fi
     else
       echo "Creating new venv at $venv"
@@ -131,7 +132,7 @@ python="${python:-python}"
         }
       else
         source "$venv/bin/activate"
-        python=${python:-python}
+        unset -v python
       fi
 
       # Set PYTHONNOUSERSITE already to avoid accidentally installing into user packages if venv is not writable.
@@ -140,7 +141,7 @@ python="${python:-python}"
       <% end -%>
 
       # Install jupyterlab if there is no jupyter installed (system python only)
-      if [[ ! $(command -v jupyter) && -z "${container_command+x}" ]] || [[ ! -z "${container_command+x}" && ! $(${python:-python} -m jupyterlab --help) ]]; then
+      if ! ${python:-python} -c 'import jupyterlab' > /dev/null 2>&1; then
         echo "Installing jupyterlab"
         ${python:-python} -m pip install jupyterlab nbclassic
       fi
@@ -155,8 +156,8 @@ python="${python:-python}"
     <% if context.user_packages == "0" -%>
       echo "Disabling user packages"
       export PYTHONNOUSERSITE="TRUE"
-      if ! $(PYTHONNOUSERSITE="TRUE" python -c 'import jupyter' > /dev/null 2>&1); then
-        if $(unset PYTHONNOUSERSITE; python -c 'import jupyter' > /dev/null 2>&1); then
+      if ! PYTHONNOUSERSITE="TRUE" ${python:-python} -c 'import jupyter' > /dev/null 2>&1; then
+        if (unset PYTHONNOUSERSITE; ${python:-python} -c 'import jupyter' > /dev/null 2>&1); then
           echo "Jupyter is installed only in user packages but user packages are disabled"
         else
           echo "Jupyter is not installed"
